@@ -1,0 +1,7 @@
+{
+    "rules": {
+        "@Symfony": true,
+        "no_unused_imports": true
+    },
+    "preset": "laravel"
+}

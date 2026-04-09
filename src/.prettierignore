@@ -1,0 +1,9 @@
+*
+public/
+!.prettierrc*
+!prettier.config.*
+!package.json
+!composer.json
+!vite.config.*
+!resources/
+!resources/**/*

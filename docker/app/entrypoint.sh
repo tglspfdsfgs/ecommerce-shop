@@ -8,6 +8,9 @@ if [ ! -f /app/.env ]; then
     php artisan key:generate --ansi
 fi
 
+echo "Caching files..."
+php artisan optimize
+
 echo "Running migrations..."
 php artisan migrate --force
 
