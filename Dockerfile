@@ -11,7 +11,18 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install \
+    libicu-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libwebp-dev
+
+RUN docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+        --with-webp
+
+RUN docker-php-ext-install \
         pdo \
         pdo_mysql \
         mbstring \
@@ -20,7 +31,10 @@ RUN apt-get update && apt-get install -y \
         pcntl \
         bcmath \
         xml \
-    && rm -rf /var/lib/apt/lists/*
+        intl \
+        gd
+
+RUN rm -rf /var/lib/apt/lists/*
     
 COPY ./docker/app/php-fpm.conf /usr/local/etc/php-fpm.d/zzz-custom.conf
 COPY ./docker/app/php.ini /usr/local/etc/php/conf.d/zzz-custom.ini
