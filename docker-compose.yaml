@@ -13,6 +13,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
   db:
     image: mysql
     restart: always
@@ -31,6 +33,18 @@ services:
       - net
     volumes:
       - db_data:/var/lib/mysql
+  redis:
+    image: redis:8-alpine
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - net
+    volumes:
+      - redis_data:/data
   nginx:
     build:
       context: .
@@ -50,6 +64,7 @@ volumes:
   uploads:
   app_logs:
   nginx_logs:
+  redis_data:
 networks:
   net:
     driver: bridge

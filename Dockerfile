@@ -15,26 +15,24 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libwebp-dev
-
-RUN docker-php-ext-configure gd \
-        --with-freetype \
-        --with-jpeg \
-        --with-webp
-
-RUN docker-php-ext-install \
-        pdo \
-        pdo_mysql \
-        mbstring \
-        zip \
-        exif \
-        pcntl \
-        bcmath \
-        xml \
-        intl \
-        gd
-
-RUN rm -rf /var/lib/apt/lists/*
+    libwebp-dev \
+    && docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    --with-webp \
+    && docker-php-ext-install -j$(nproc) \
+    pdo \
+    pdo_mysql \
+    mbstring \
+    zip \
+    exif \
+    pcntl \
+    bcmath \
+    xml \
+    intl \
+    gd \ 
+    && pecl install redis && docker-php-ext-enable redis \ 
+    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
     
 COPY ./docker/app/php-fpm.conf /usr/local/etc/php-fpm.d/zzz-custom.conf
 COPY ./docker/app/php.ini /usr/local/etc/php/conf.d/zzz-custom.ini

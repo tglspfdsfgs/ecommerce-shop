@@ -5,4 +5,11 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@plugin "daisyui";
+@plugin "daisyui" {
+    themes: cupcake --default;
+}
+
+@utility page-container {
+    max-width: calc(var(--spacing) * 318);
+    margin-inline: auto;
+}
