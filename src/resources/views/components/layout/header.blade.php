@@ -8,7 +8,10 @@ new class extends Component {};
 <div class="bg-neutral drawer block">
     <div class="page-container navbar bg-neutral text-neutral-content justify-between">
         <div class="max-md:hidden">
-            <button class="btn btn-ghost text-xl">LOGO</button>
+            <a href="#" class="text-warning flex items-center">
+                <x-assets.logos.logo :class='"h-8 w-8 inline mr-2"' />
+                <span class="font-extrabold">Pizza</span><span class="font-semibold italic">Dash</span>
+            </a>
         </div>
         <div class="md:hidden">
             <input id="my-drawer-1" type="checkbox" class="drawer-toggle" />
@@ -20,9 +23,12 @@ new class extends Component {};
             <div class="drawer-side">
                 <label for="my-drawer-1" aria-label="close sidebar"></label>
                 <div class="menu bg-neutral text-neutral-content relative min-h-full w-screen p-4 pt-0">
-                    <div class="bg-neutral border-base-300 border-b-1 sticky top-0 z-10 flex justify-between py-2">
+                    <div class="bg-neutral border-base-300 sticky top-0 z-10 flex justify-between border-b py-2">
                         <div>
-                            <button class="btn btn-ghost text-xl">LOGO</button>
+                            <a href="#" class="text-warning flex items-center">
+                                <x-assets.logos.logo :class='"h-8 w-8 inline mr-2"' />
+                                <span class="font-extrabold">Pizza</span><span class="font-semibold italic">Dash</span>
+                            </a>
                         </div>
                         <label for="my-drawer-1" aria-label="close sidebar" class="button self-center">
                             <x-assets.ui.x-mark />
