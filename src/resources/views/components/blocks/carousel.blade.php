@@ -63,7 +63,7 @@
         this.autoplayIntervalTime = newIntervalTime
         this.autoplay()
     },
-}" x-init="autoplay" class="relative mb-3 w-full overflow-hidden">
+}" x-init="autoplay" class="relative mb-10 w-full overflow-hidden">
 
     <div class="aspect-600/400 md:aspect-1280/390 relative mb-3 w-full">
         <template x-for="(slide, index) in slides">
