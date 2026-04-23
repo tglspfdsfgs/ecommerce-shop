@@ -8,7 +8,7 @@ new class extends Component {};
 <footer class="bg-neutral">
     <footer class="page-container footer sm:footer-horizontal bg-neutral text-neutral-content p-10">
         <div>
-            <a href="#" class="text-warning mb-2 flex flex-col items-center text-lg">
+            <a href="{{ route("home") }}" wire:navigate class="text-warning mb-2 flex flex-col items-center text-lg">
                 <x-assets.logos.logo :class='"h-12 w-12 mb-1"' />
                 <span><span class="font-extrabold">Pizza</span><span class="font-semibold italic">Dash</span></span>
             </a>

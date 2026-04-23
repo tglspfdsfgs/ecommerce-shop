@@ -8,9 +8,7 @@ new class extends Component {};
 <div>
     <livewire:layout.header />
     <livewire:layout.main>
-        <x-blocks.carousel />
-        <livewire:blocks.showcase on-home-page />
-        <x-blocks.home-categories />
+        <livewire:blocks.showcase />
     </livewire:layout.main>
     <livewire:layout.footer />
 </div>

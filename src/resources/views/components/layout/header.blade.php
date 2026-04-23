@@ -8,7 +8,7 @@ new class extends Component {};
 <div class="bg-neutral drawer block">
     <div class="page-container navbar bg-neutral text-neutral-content justify-between">
         <div class="max-md:hidden">
-            <a href="#" class="text-warning flex items-center">
+            <a href="{{ route("home") }}" wire:navigate class="text-warning flex items-center">
                 <x-assets.logos.logo :class='"h-8 w-8 inline mr-2"' />
                 <span class="font-extrabold">Pizza</span><span class="font-semibold italic">Dash</span>
             </a>
@@ -25,7 +25,7 @@ new class extends Component {};
                 <div class="menu bg-neutral text-neutral-content relative min-h-full w-screen p-4 pt-0">
                     <div class="bg-neutral border-base-300 sticky top-0 z-10 flex justify-between border-b py-2">
                         <div>
-                            <a href="#" class="text-warning flex items-center">
+                            <a href=" {{ route("home") }}" wire:navigate class="text-warning flex items-center">
                                 <x-assets.logos.logo :class='"h-8 w-8 inline mr-2"' />
                                 <span class="font-extrabold">Pizza</span><span class="font-semibold italic">Dash</span>
                             </a>
@@ -35,11 +35,11 @@ new class extends Component {};
                         </label>
                     </div>
                     <ul class="w-50 mt-2">
-                        <li><a class="text-error">Promo and news</a></li>
-                        <li><a>Pizza</a></li>
-                        <li><a>Drinks</a></li>
-                        <li><a>Sides</a></li>
-                        <li><a>Dessert</a></li>
+                        <li><a class="text-error" href="#">Promo and news</a></li>
+                        <li><a href="{{ route("pizza") }}" wire:navigate>Pizza</a></li>
+                        <li><a href="{{ route("drinks") }}" wire:navigate>Drinks</a></li>
+                        <li><a href="{{ route("sides") }}" wire:navigate>Sides</a></li>
+                        <li><a href="{{ route("dessert") }}" wire:navigate>Dessert</a></li>
                     </ul>
                     <livewire:layout.footer />
                 </div>
@@ -48,11 +48,11 @@ new class extends Component {};
         </div>
         <div class="max-md:hidden">
             <ul class="menu menu-horizontal px-1">
-                <li><a class="text-error">Promo and news</a></li>
-                <li><a>Pizza</a></li>
-                <li><a>Drinks</a></li>
-                <li><a>Sides</a></li>
-                <li><a>Dessert</a></li>
+                <li><a class="text-error" href="#">Promo and news</a></li>
+                <li><a href="{{ route("pizza") }}" wire:navigate>Pizza</a></li>
+                <li><a href="{{ route("drinks") }}" wire:navigate>Drinks</a></li>
+                <li><a href="{{ route("sides") }}" wire:navigate>Sides</a></li>
+                <li><a href="{{ route("dessert") }}" wire:navigate>Dessert</a></li>
             </ul>
         </div>
         <div class="flex">
