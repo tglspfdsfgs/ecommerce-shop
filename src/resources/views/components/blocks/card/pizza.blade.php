@@ -16,6 +16,12 @@ new class extends Component {};
         const [dough, crust] = val.split('|');
         this.dough = dough;
         this.crust = crust;
+    },
+    price: {
+        'standard': { 'without-bort': 281, 'cheesy': 330, 'hot-dog': 346 },
+        'large': { 'without-bort': 341, 'cheesy': 398, 'hot-dog': 419 },
+        'extraLarge': { 'without-bort': 395, 'cheesy': 460, 'hot-dog': 486 },
+        'XXLarge': { 'without-bort': 461, 'cheesy': 541, 'hot-dog': 556 },
     }
 }" class="card group-[.showed-more]:max-sm:card-side bg-base-100 shrink-0.5 shadow-sm transition-shadow hover:shadow-xl">
     <figure class="card w-full overflow-hidden group-[.showed-more]:max-sm:aspect-square group-[.showed-more]:max-sm:basis-1/2">
@@ -50,7 +56,7 @@ new class extends Component {};
 
         <div class="card-actions group mb-1.5">
             <select x-model="size"
-                class="select select-info group-[.showed-more]:max-sm:select-neutral w-full group-[.showed-more]:max-sm:rounded-md group-[.showed-more]:sm:mb-2">
+                class="select select-info group-[.showed-more]:max-sm:select-neutral w-full leading-9 group-[.showed-more]:max-sm:rounded-md group-[.showed-more]:sm:mb-2">
                 <option value="standard">Standard size</option>
                 <option value="large">Large</option>
                 <option value="extraLarge">ExtraLarge</option>
@@ -80,7 +86,7 @@ new class extends Component {};
 
             <a href="#" class="btn btn-outline btn-error mb-3 w-full text-black group-[.showed-more]:max-sm:hidden">Replace ingredients</a>
             <div class="flex w-full items-center justify-between">
-                <span class="font-bold md:text-lg">300.00 uah</span>
+                <span class="font-bold md:text-lg"><span x-text="price[size][crust]"></span>.00 uah</span>
                 <button class="btn btn-error max-md:btn-sm text-white">
                     <x-assets.ui.basket />
                     Add
