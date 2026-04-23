@@ -7,7 +7,7 @@ new class extends Component {
 };
 ?>
 
-<section x-data="{ showedMore: {{ json_encode($onHomePage) }} }">
+<section x-data="{ showedMore: {{ json_encode(!$onHomePage) }} }" class="mb-5">
     <div class="mx-3 mb-4 sm:flex sm:justify-start">
         <h2 class="text-3xl font-bold">
             Bestsellers and novelties
