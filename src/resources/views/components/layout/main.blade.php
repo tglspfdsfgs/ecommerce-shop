@@ -10,6 +10,8 @@ new class extends Component {};
         <div class="mx-2 my-10">
             <x-blocks.carousel />
             <livewire:blocks.showcase />
+            <br /><br />
+            <x-blocks.home-categories />
         </div>
     </main>
 </div>
