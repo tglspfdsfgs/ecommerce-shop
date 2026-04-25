@@ -37,22 +37,22 @@ new class extends Component {
 
         <div x-ref="slider" x-bind:class="showedMore ? 'flex flex-wrap' : 'flex flex-nowrap overflow-x-auto no-scrollbar'">
             <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                <livewire:blocks.card.pizza />
+                <livewire:blocks.card.product />
             </div>
             <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                <livewire:blocks.card.pizza />
+                <livewire:blocks.card.product />
             </div>
             <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                <livewire:blocks.card.pizza />
+                <livewire:blocks.card.product />
             </div>
             <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                <livewire:blocks.card.pizza />
+                <livewire:blocks.card.product />
             </div>
             <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                <livewire:blocks.card.pizza />
+                <livewire:blocks.card.product />
             </div>
             <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                <livewire:blocks.card.pizza />
+                <livewire:blocks.card.product />
             </div>
         </div>
     </div>
