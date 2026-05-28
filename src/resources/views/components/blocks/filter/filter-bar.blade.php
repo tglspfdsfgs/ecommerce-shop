@@ -41,7 +41,9 @@ new class extends Component {
                         label: schema.values[item],
                         resetCallback: () => {
                             const active = this.filters[name].filter(v => v !== item);
-                            this.filters[name] = active.length === 0 ? undefined : active;
+                            active.length === 0 ?
+                                this.filters = {} :
+                                this.filters[name] = active;
                         }
                     });
                 }
