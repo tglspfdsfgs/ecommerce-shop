@@ -16,7 +16,18 @@ new class extends Component {
 };
 ?>
 
-<section x-data="{ showedMore: {{ json_encode(!$onHomePage) }} }" class="mb-5">
+<section x-data="{
+    showedMore: {{ json_encode(!$onHomePage) }},
+    canScroll: false,
+    checkSlider() {
+        this.$nextTick(() => {
+            this.canScroll =
+                this.$refs.slider.scrollWidth >
+                this.$refs.slider.clientWidth + 1;
+        });
+    }
+}" x-init="checkSlider();
+window.addEventListener('resize', () => { checkSlider(); });" class="mb-5">
     <div class="mx-3 mb-4 sm:flex sm:justify-start">
         <h2 class="text-3xl font-bold">
             Bestsellers and novelties
@@ -29,21 +40,31 @@ new class extends Component {
                     </svg>
                 </span>
             @endif
-
         </h2>
 
-        <a @click="showedMore = true" class="link link-info ml-auto text-lg" :class="{ 'hidden': showedMore }">
+        <a x-cloak x-show="!showedMore && canScroll" @click="showedMore = true" class="link link-info ml-auto text-lg">
             Show all
         </a>
     </div>
 
     <div class="disable-scroll-x group relative" :class="showedMore && 'showed-more'">
-        <button @click="$refs.slider.scrollBy({ left: -$refs.slider.clientWidth, behavior: 'smooth' })"
-            class="btn btn-circle btn-outline btn-info btn-lg md:btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2" :class="showedMore && 'hidden'">
+        <button
+            @click="
+                $refs.slider.scrollBy({
+                    left: -$refs.slider.querySelector('.product-item').offsetWidth,
+                    behavior: 'smooth'
+                })"
+            x-cloak x-show="!showedMore && canScroll"class="btn btn-circle btn-outline btn-info btn-lg md:btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2">
             ❮
         </button>
-        <button @click="$refs.slider.scrollBy({ left: $refs.slider.clientWidth, behavior: 'smooth' })"
-            class="btn btn-circle btn-outline btn-info btn-lg md:btn-sm absolute right-0 top-1/2 z-10 -translate-y-1/2" :class="showedMore && 'hidden'">
+        <button
+            @click="
+                $refs.slider.scrollBy({
+                    left: $refs.slider.querySelector('.product-item').offsetWidth,
+                    behavior: 'smooth'
+                })"
+            x-cloak x-show="!showedMore && canScroll"
+            class="btn btn-circle btn-outline btn-info btn-lg md:btn-sm absolute right-0 top-1/2 z-10 -translate-y-1/2">
             ❯
         </button>
 
