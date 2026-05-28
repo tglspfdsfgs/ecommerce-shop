@@ -42,7 +42,7 @@ new class extends Component {
                         resetCallback: () => {
                             const active = this.filters[name].filter(v => v !== item);
                             active.length === 0 ?
-                                this.filters = {} :
+                                this.filters[name] = undefined :
                                 this.filters[name] = active;
                         }
                     });
@@ -75,7 +75,7 @@ new class extends Component {
                     <button class="cursor-pointer" @click="filter.resetCallback()" type="button">✕</button>
                 </span>
             </template>
-            <template x-if="!(Object.keys(filters).length === 0)">
+            <template x-if="JSON.stringify(filters) !== '{}'">
                 <button type="button" class="text-info ml-1 cursor-pointer" @click="filters = {}">
                     Clear filters
                 </button>
