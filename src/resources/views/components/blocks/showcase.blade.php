@@ -6,11 +6,11 @@ new class extends Component {
     public bool $onHomePage = false;
     public array $data;
 
-    public function productView(string $productType): string
+    public function productCardView(string $productType): string
     {
         return match ($productType) {
             "pizza" => "blocks.card.pizza",
-            "drink" => "blocks.card.product",
+            "drink" => "blocks.card.generic",
         };
     }
 };
@@ -71,7 +71,7 @@ window.addEventListener('resize', () => { checkSlider(); });" class="mb-5">
         <div x-ref="slider" x-bind:class="showedMore ? 'flex flex-wrap' : 'flex flex-nowrap overflow-x-auto no-scrollbar'">
             @foreach ($data["products"] as $product)
                 <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                    <livewire:is :component='$this->productView($product["productType"])' :data="$product" />
+                    <livewire:is :component='$this->productCardView($product["productType"])' :data="$product" />
                 </div>
             @endforeach
         </div>
