@@ -5,9 +5,9 @@ use Livewire\Component;
 new class extends Component {
     public array $data;
     private array $options = [
-        "sizes" => ["Standard size", "Large", "ExtraLarge", "XXLarge"],
-        "doughs" => ["Dough Thick", "Dough Thin"],
-        "crusts" => ["Without bort", "Cheesy", "Hot-Dog"],
+        "sizes" => ["standard-size" => "Standard size", "large" => "Large", "extralarge" => "ExtraLarge", "xxlarge" => "XXLarge"],
+        "doughs" => ["dough-thick" => "Dough Thick", "dough-thin" => "Dough Thin"],
+        "crusts" => ["without-bort" => "Without bort", "cheesy" => "Cheesy", "hot-dog" => "Hot-Dog"],
     ];
     private array $defaults;
 
@@ -86,31 +86,31 @@ new class extends Component {
         <div class="card-actions group mb-1.5">
             <select x-model="size"
                 class="select select-info group-[.showed-more]:max-sm:select-neutral w-full leading-9 group-[.showed-more]:max-sm:rounded-md group-[.showed-more]:sm:mb-2">
-                @foreach ($this->options["sizes"] as $size)
-                    <option @click="resetValues('{{ $size }}')" value="{{ $size }}">
-                        {{ $size }}
+                @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
+                    <option @click="resetValues('{{ $sizeSlug }}')" value="{{ $sizeSlug }}">
+                        {{ $sizeName }}
                     </option>
                 @endforeach
             </select>
             <div class="flex w-full justify-between gap-1 group-[.showed-more]:max-sm:hidden">
-                @foreach ($this->options["doughs"] as $dough)
-                    <input type="radio" name="dough{{ $this->getId() }}" x-model="dough" value="{{ $dough }}"
-                        class="btn btn-sm checked:btn-info shrink grow" aria-label="{{ $dough }}"
-                        :class="{ 'btn-disabled': !values[size]['{{ $dough }}'] }" @click="resetValues()" />
+                @foreach ($this->options["doughs"] as $doughSlug => $doughName)
+                    <input type="radio" name="dough{{ $this->getId() }}" x-model="dough" value="{{ $doughSlug }}"
+                        class="btn btn-sm checked:btn-info shrink grow" aria-label="{{ $doughName }}"
+                        :class="{ 'btn-disabled': !values[size]['{{ $doughSlug }}'] }" @click="resetValues()" />
                 @endforeach
             </div>
             <div class="mb-3 flex w-full justify-between gap-0.5 group-[.showed-more]:max-sm:hidden">
-                @foreach ($this->options["crusts"] as $crust)
-                    <input type="radio" name="crust{{ $this->getId() }}" x-model="crust" value="{{ $crust }}"
-                        class="btn btn-xs checked:btn-info shrink grow" :class="{ 'btn-disabled': !values[size][dough]['{{ $crust }}'] }"
-                        aria-label="{{ $crust }}" />
+                @foreach ($this->options["crusts"] as $crustSlug => $crustName)
+                    <input type="radio" name="crust{{ $this->getId() }}" x-model="crust" value="{{ $crustSlug }}"
+                        class="btn btn-xs checked:btn-info shrink grow" :class="{ 'btn-disabled': !values[size][dough]['{{ $crustSlug }}'] }"
+                        aria-label="{{ $crustName }}" />
                 @endforeach
             </div>
             <select x-model="selectValue" class="select select-neutral hidden rounded-md group-[.showed-more]:max-sm:block">
-                @foreach ($this->options["doughs"] as $dough)
-                    @foreach ($this->options["crusts"] as $crust)
-                        <option :class="{ 'hidden': !values[size]?.['{{ $dough }}']?.['{{ $crust }}'] }"
-                            value="{{ $dough }}|{{ $crust }}">{{ $dough }} / {{ $crust }}</option>
+                @foreach ($this->options["doughs"] as $doughSlug => $doughName)
+                    @foreach ($this->options["crusts"] as $crustSlug => $crustName)
+                        <option :class="{ 'hidden': !values[size]?.['{{ $doughSlug }}']?.['{{ $crustSlug }}'] }"
+                            value="{{ $doughSlug }}|{{ $crustSlug }}">{{ $doughName }} / {{ $crustName }}</option>
                     @endforeach
                 @endforeach
             </select>
