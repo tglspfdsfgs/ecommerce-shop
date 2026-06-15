@@ -20,8 +20,6 @@ return new class extends Migration {
             $table->string('page_image_path')->nullable();
             $table->string('thumbnail_image_path')->nullable();
 
-            $table->json('composition')->nullable();
-
             $table->json('labels')->nullable();
 
             $table->json('values')->nullable();

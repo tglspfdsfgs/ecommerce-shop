@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PizzaIngredients\Ingredient;
 use App\Models\PizzaOptions\OptionCrust;
 use App\Models\PizzaOptions\OptionDough;
 use App\Models\PizzaOptions\OptionSize;
@@ -7,81 +8,19 @@ use App\Models\Products\Pizza;
 use Livewire\Component;
 
 new class extends Component {
-    public array $data;
+    private array $data;
 
     private array $options;
 
-    private array $ingredients = [
-        [
-            "id" => 1,
-            "title" => "Mozarella",
-            "slug" => "mozarella",
-            "image_path" => "storage/composition/cheese/mozzarella.png",
-            "category" => [
-                "id" => 1,
-                "title" => "Cheese",
-                "slug" => "cheese",
-            ],
-            "prices" => [
-                "standard-size" => 29,
-                "large" => 40,
-                "extralarge" => 47,
-                "xxlarge" => 57,
-            ],
-        ],
-        [
-            "ingredient_id" => 2,
-            "title" => "Peperoni",
-            "slug" => "peperoni",
-            "image_path" => "storage/composition/meat/pepp.png",
-            "category" => [
-                "id" => 2,
-                "title" => "Meat",
-                "slug" => "meat",
-            ],
-            "prices" => [
-                "standard-size" => 29,
-                "large" => 40,
-                "extralarge" => 47,
-                "xxlarge" => 57,
-            ],
-        ],
-        [
-            "ingredient_id" => 3,
-            "title" => "BBQ sauce",
-            "slug" => "bbq-sauce",
-            "image_path" => "storage/composition/sauses/sous-bbk.png",
-            "category_id" => 3,
-            "category_name" => "sauces",
-            "category_slug" => "Sauce",
-            "prices" => [
-                "standard-size" => 29,
-                "large" => 40,
-                "extralarge" => 47,
-                "xxlarge" => 57,
-            ],
-        ],
-        [
-            "ingredient_id" => 4,
-            "title" => "Tomatoes",
-            "slug" => "tomatoes",
-            "category_id" => 4,
-            "category_name" => "vegetables",
-            "category_slug" => "Vegetables",
-            "prices" => [
-                "standard-size" => 29,
-                "large" => 40,
-                "extralarge" => 47,
-                "xxlarge" => 57,
-            ],
-        ],
-    ];
+    private array $ingredients;
 
     private array $defaults;
 
     public function mount(Pizza $product): void
     {
         $this->data = $product->toArray();
+
+        $this->ingredients = Ingredient::detailed()->get()->toArray();
 
         $this->options = [
             "sizes" => OptionSize::orderBy("sort_order")->pluck("name", "slug")->toArray(),
@@ -143,7 +82,7 @@ new class extends Component {
 
     price: @json($this->defaults["price"]),
 
-    values: @json($data["values"]),
+    values: @json($this->data["values"]),
 
     order: {
         doughs: @json(array_keys($this->options["doughs"])),
@@ -191,7 +130,7 @@ new class extends Component {
 
                 </span>
                 <div class="shrink">
-                    <h2 class="mb-2 text-xl font-bold">{{ $data["title"] }}</h2>
+                    <h2 class="mb-2 text-xl font-bold">{{ $this->data["title"] }}</h2>
                     <div class="mb-4">
                         <span class="mr-2 text-lg font-bold"><span x-text="price + `.00 uah`">{{ $this->defaults["price"] }}.00 uah</span></span>
 
@@ -204,7 +143,7 @@ new class extends Component {
                         <div class="mb-2">
                             <div class="mb-1">Size:</div>
                             @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
-                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $data["values"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
+                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $this->data["values"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $sizeName }}" x-model="size" />
                             @endforeach
                         </div>

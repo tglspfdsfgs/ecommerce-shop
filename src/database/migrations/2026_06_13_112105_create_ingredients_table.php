@@ -13,14 +13,13 @@ return new class extends Migration {
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
 
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('image_path')->nullable();
+
             $table->foreignId('category_id')
                 ->constrained('ingredients_categories')
                 ->cascadeOnDelete();
-
-            $table->string('name');
-            $table->string('slug')->unique();
-
-            // $table->json('prices');
 
             $table->timestamps();
         });

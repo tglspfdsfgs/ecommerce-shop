@@ -12,16 +12,16 @@ class PizzaIngredientsSeeder extends Seeder
 {
     private array $configuration = [
         'Cheese' => [
-            'Mozarella',
+            'Mozarella' => 'storage/composition/cheese/mozzarella.png',
         ],
         'Meat' => [
-            'Peperoni',
+            'Peperoni' => 'storage/composition/meat/pepp.png',
         ],
         'Sauces' => [
-            'BBQ sauce',
+            'BBQ sauce' => 'storage/composition/sauses/sous-bbk.png',
         ],
         'Vegetables' => [
-            'Tomatoes',
+            'Tomatoes' => 'storage/composition/vegetables/tomato.png',
         ],
     ];
     private array $categoryIds = [];
@@ -50,10 +50,11 @@ class PizzaIngredientsSeeder extends Seeder
     private function seedIngredients(): void
     {
         foreach ($this->configuration as $category => $ingredients) {
-            foreach ($ingredients as $ingredient) {
+            foreach ($ingredients as $ingredient => $imagePath) {
                 $model = Ingredient::create([
                     'name' => $ingredient,
                     'category_id' => $this->categoryIds[$category],
+                    'image_path' => $imagePath,
                 ]);
                 $this->ingredientIds[$ingredient] = $model->id;
             }
