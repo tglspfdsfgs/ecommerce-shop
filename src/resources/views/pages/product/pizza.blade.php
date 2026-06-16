@@ -4,11 +4,11 @@ use App\Models\PizzaIngredients\Ingredient;
 use App\Models\PizzaOptions\OptionCrust;
 use App\Models\PizzaOptions\OptionDough;
 use App\Models\PizzaOptions\OptionSize;
-use App\Models\Products\Pizza;
+use App\Services\PizzaService;
 use Livewire\Component;
 
 new class extends Component {
-    private array $data;
+    private array $product;
 
     private array $options;
 
@@ -16,9 +16,9 @@ new class extends Component {
 
     private array $defaults;
 
-    public function mount(Pizza $product): void
+    public function mount(PizzaService $service, string $slug): void
     {
-        $this->data = $product->toArray();
+        $this->product = $service->getBySlug($slug);
 
         $this->ingredients = Ingredient::detailed()->get()->toArray();
 
@@ -28,7 +28,7 @@ new class extends Component {
             "crusts" => OptionCrust::orderBy("sort_order")->pluck("name", "slug")->toArray(),
         ];
 
-        $values = $this->data["values"];
+        $values = $this->product["values"];
 
         $size = $this->getFirstSize($values);
         $dough = $this->getFirstDough($values, $size);
@@ -82,7 +82,7 @@ new class extends Component {
 
     price: @json($this->defaults["price"]),
 
-    values: @json($this->data["values"]),
+    values: @json($this->product["values"]),
 
     order: {
         doughs: @json(array_keys($this->options["doughs"])),
@@ -130,7 +130,7 @@ new class extends Component {
 
                 </span>
                 <div class="shrink">
-                    <h2 class="mb-2 text-xl font-bold">{{ $this->data["title"] }}</h2>
+                    <h2 class="mb-2 text-xl font-bold">{{ $this->product["title"] }}</h2>
                     <div class="mb-4">
                         <span class="mr-2 text-lg font-bold"><span x-text="price + `.00 uah`">{{ $this->defaults["price"] }}.00 uah</span></span>
 
@@ -143,7 +143,7 @@ new class extends Component {
                         <div class="mb-2">
                             <div class="mb-1">Size:</div>
                             @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
-                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $this->data["values"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
+                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $this->product["values"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $sizeName }}" x-model="size" />
                             @endforeach
                         </div>

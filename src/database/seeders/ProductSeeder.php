@@ -9,29 +9,11 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
-        Pizza::create([
+        $pizza = Pizza::create([
             'card_image_path' => 'storage/card/pepperony-y-tomaty.png',
             'page_image_path' => 'storage/product/pepperony-y-tomaty.png',
             'thumbnail_image_path' => 'storage/thumbnail/pepperony-y-tomaty.png',
             'title' => 'Pizza Pepperoni with tomatoes',
-            'composition' => [
-                [
-                    'ingredient_id' => 1,
-                    'quantity' => 1,
-                ],
-                [
-                    'ingredient_id' => 2,
-                    'quantity' => 1,
-                ],
-                [
-                    'ingredient_id' => 3,
-                    'quantity' => 1,
-                ],
-                [
-                    'ingredient_id' => 4,
-                    'quantity' => 1,
-                ],
-            ],
             'labels' => ['spicy', 'cheesy', 'vegetarian'],
             'values' => [
                 'standard-size' => [
@@ -117,6 +99,13 @@ class ProductSeeder extends Seeder
                     ],
                 ],
             ],
+        ]);
+
+        $pizza->composition()->attach([
+            1 => ['quantity' => 1],
+            2 => ['quantity' => 1],
+            3 => ['quantity' => 1],
+            4 => ['quantity' => 1],
         ]);
     }
 }

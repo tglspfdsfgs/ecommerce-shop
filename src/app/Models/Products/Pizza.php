@@ -18,6 +18,24 @@ class Pizza extends Model
         'values' => 'array',
     ];
 
+    public function scopeDetailed($query)
+    {
+        return $query
+            ->select([
+                'id',
+                'title',
+                'slug',
+                'card_image_path',
+                'page_image_path',
+                'thumbnail_image_path',
+                'labels',
+                'values',
+            ])
+            ->with([
+                'composition:id,name,slug',
+            ]);
+    }
+
     public function composition(): BelongsToMany
     {
         return $this->belongsToMany(Ingredient::class, 'compositions')
