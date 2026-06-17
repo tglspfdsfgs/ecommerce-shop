@@ -1,9 +1,7 @@
 <?php
 
 use App\Models\PizzaIngredients\Ingredient;
-use App\Models\PizzaOptions\OptionCrust;
-use App\Models\PizzaOptions\OptionDough;
-use App\Models\PizzaOptions\OptionSize;
+use App\Registries\PizzaOptionsRegistry;
 use App\Services\PizzaService;
 use Livewire\Component;
 
@@ -22,13 +20,9 @@ new class extends Component {
 
         $this->ingredients = Ingredient::detailed()->get()->toArray();
 
-        $this->options = [
-            "sizes" => OptionSize::orderBy("sort_order")->pluck("name", "slug")->toArray(),
-            "doughs" => OptionDough::orderBy("sort_order")->pluck("name", "slug")->toArray(),
-            "crusts" => OptionCrust::orderBy("sort_order")->pluck("name", "slug")->toArray(),
-        ];
+        $this->options = PizzaOptionsRegistry::pluck("name", "slug");
 
-        $values = $this->product["values"];
+        $values = $this->product["variants"];
 
         $size = $this->getFirstSize($values);
         $dough = $this->getFirstDough($values, $size);
@@ -82,7 +76,7 @@ new class extends Component {
 
     price: @json($this->defaults["price"]),
 
-    values: @json($this->product["values"]),
+    values: @json($this->product["variants"]),
 
     order: {
         doughs: @json(array_keys($this->options["doughs"])),
@@ -143,7 +137,7 @@ new class extends Component {
                         <div class="mb-2">
                             <div class="mb-1">Size:</div>
                             @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
-                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $this->product["values"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
+                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $this->product["variants"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $sizeName }}" x-model="size" />
                             @endforeach
                         </div>

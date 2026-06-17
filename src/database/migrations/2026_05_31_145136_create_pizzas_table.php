@@ -22,8 +22,6 @@ return new class extends Migration {
 
             $table->json('labels')->nullable();
 
-            $table->json('values')->nullable();
-
             $table->timestamps();
         });
     }
