@@ -6,13 +6,11 @@ use App\Services\PizzaService;
 use Livewire\Component;
 
 new class extends Component {
-    private array $product;
+    public array $product;
 
-    private array $options;
+    public array $options;
 
-    private array $ingredients;
-
-    private array $defaults;
+    public array $ingredients;
 
     public function mount(string $slug, PizzaService $service): void
     {
@@ -21,71 +19,22 @@ new class extends Component {
         $this->ingredients = PizzaIngredientsRegistry::list();
 
         $this->options = PizzaOptionsRegistry::pluck("name", "slug");
-
-        $this->initializeDefaults();
-    }
-
-    private function initializeDefaults(): void
-    {
-        $values = $this->product["variants"];
-
-        $size = $this->getFirstSize($values);
-        $dough = $this->getFirstDough($values, $size);
-        $crust = $this->getFirstCrust($values, $size, $dough);
-
-        $price = $values[$size][$dough][$crust]["price"];
-        $weight = $values[$size][$dough][$crust]["weight"];
-
-        $this->defaults = compact("size", "dough", "crust", "price", "weight");
-    }
-
-    private function getFirstSize(array $values): string
-    {
-        foreach (array_keys($this->options["sizes"]) as $size) {
-            if (isset($values[$size])) {
-                return $size;
-            }
-        }
-
-        throw new RuntimeException("No available size");
-    }
-
-    private function getFirstDough(array $values, string $size): string
-    {
-        foreach (array_keys($this->options["doughs"]) as $dough) {
-            if (isset($values[$size][$dough])) {
-                return $dough;
-            }
-        }
-
-        throw new RuntimeException("No available dough");
-    }
-
-    private function getFirstCrust(array $values, string $size, string $dough): string
-    {
-        foreach (array_keys($this->options["crusts"]) as $crust) {
-            if (isset($values[$size][$dough][$crust])) {
-                return $crust;
-            }
-        }
-
-        throw new RuntimeException("No available crust");
     }
 };
 ?>
 
 <div x-data='{
-    size: @json($this->defaults["size"]),
-    dough: @json($this->defaults["dough"]),
-    crust: @json($this->defaults["crust"]),
+    size: @json($product["defaults"]["size"]),
+    dough: @json($product["defaults"]["dough"]),
+    crust: @json($product["defaults"]["crust"]),
 
-    price: @json($this->defaults["price"]),
+    price: @json($product["defaults"]["price"]),
 
-    values: @json($this->product["variants"]),
+    values: @json($product["variants"]),
 
     order: {
-        doughs: @json(array_keys($this->options["doughs"])),
-        crusts: @json(array_keys($this->options["crusts"])),
+        doughs: @json(array_keys($options["doughs"])),
+        crusts: @json(array_keys($options["crusts"])),
     },
 
     getFirstDough() {
@@ -123,15 +72,15 @@ new class extends Component {
                     <div class="relative">
                         <img class="mx-auto" src='{{ asset("storage/product/pepperony-y-tomaty.png") }}'>
                         <div class="badge badge-sm badge-neutral bg-neutral/50 text-neutral-content absolute bottom-1 right-1 border-none">
-                            <span x-text="(values?.[size]?.[dough]?.[crust]?.['weight'] ?? 0) + ` g*`">{{ $this->defaults["weight"] }} g*</span>
+                            <span x-text="(values?.[size]?.[dough]?.[crust]?.['weight'] ?? 0) + ` g*`">{{ $product["defaults"]["weight"] }} g*</span>
                         </div>
                     </div>
 
                 </span>
                 <div class="shrink">
-                    <h2 class="mb-2 text-xl font-bold">{{ $this->product["title"] }}</h2>
+                    <h2 class="mb-2 text-xl font-bold">{{ $product["title"] }}</h2>
                     <div class="mb-4">
-                        <span class="mr-2 text-lg font-bold"><span x-text="price + `.00 uah`">{{ $this->defaults["price"] }}.00 uah</span></span>
+                        <span class="mr-2 text-lg font-bold"><span x-text="price + `.00 uah`">{{ $product["defaults"]["price"] }}.00 uah</span></span>
 
                         <button class="btn btn-error max-md:btn-sm text-white">
                             <x-assets.ui.basket />
@@ -141,14 +90,14 @@ new class extends Component {
                     <div>
                         <div class="mb-2">
                             <div class="mb-1">Size:</div>
-                            @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
-                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $this->product["variants"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
+                            @foreach ($options["sizes"] as $sizeSlug => $sizeName)
+                                <input type="radio" @disabled(!array_key_exists($sizeSlug, $product["variants"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $sizeName }}" x-model="size" />
                             @endforeach
                         </div>
                         <div class="mb-2">
                             <div class="mb-1">Dough:</div>
-                            @foreach ($this->options["doughs"] as $doughSlug => $doughName)
+                            @foreach ($options["doughs"] as $doughSlug => $doughName)
                                 <input type="radio" x-model="dough" :checked="dough === '{{ $doughSlug }}'" value="{{ $doughSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $doughName }}"
                                     :class="{ 'btn-disabled': !values?.[size]?.['{{ $doughSlug }}'] }" />
@@ -156,7 +105,7 @@ new class extends Component {
                         </div>
                         <div class="mb-2">
                             <div class="mb-1">Crust:</div>
-                            @foreach ($this->options["crusts"] as $crustSlug => $crustName)
+                            @foreach ($options["crusts"] as $crustSlug => $crustName)
                                 <input type="radio" x-model="crust" :checked="crust === '{{ $crustSlug }}'" value="{{ $crustSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" :class="{ 'btn-disabled': !values?.[size]?.[dough]?.['{{ $crustSlug }}'] }"
                                     aria-label="{{ $crustName }}" />

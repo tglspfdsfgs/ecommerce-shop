@@ -8,10 +8,12 @@ use App\Registries\PizzaOptionsRegistry;
 class PizzaService
 {
     private array $optionSlugs;
+    private array $orderedOptions;
 
     public function __construct()
     {
         $this->optionSlugs = PizzaOptionsRegistry::pluck('slug', 'id');
+        $this->orderedOptions = PizzaOptionsRegistry::list();
     }
 
     public function getBySlug(string $slug): array
@@ -54,6 +56,8 @@ class PizzaService
 
         $this->transformVariants($pizza);
 
+        $this->appendDefaults($pizza);
+
         return $pizza;
     }
 
@@ -88,5 +92,35 @@ class PizzaService
                     )
                 )
         );
+    }
+
+    private function appendDefaults(Pizza $pizza): void
+    {
+        $variants = $pizza->variants;
+
+        $size = $this->firstAvailableOption($this->orderedOptions['sizes'], $variants);
+
+        $dough = $this->firstAvailableOption($this->orderedOptions['doughs'], $variants[$size]);
+
+        $crust = $this->firstAvailableOption($this->orderedOptions['crusts'], $variants[$size][$dough]);
+
+        $pizza->setAttribute('defaults', [
+            'size' => $size,
+            'dough' => $dough,
+            'crust' => $crust,
+            'price' => $variants[$size][$dough][$crust]['price'],
+            'weight' => $variants[$size][$dough][$crust]['weight'],
+        ]);
+    }
+
+    private function firstAvailableOption(array $ordered, $data): string
+    {
+        foreach ($ordered as $option) {
+            if (isset($data[$option['slug']])) {
+                return $option['slug'];
+            }
+        }
+
+        throw new \RuntimeException('No available option');
     }
 }
