@@ -18,7 +18,7 @@ new class extends Component {
     {
         $this->product = $service->getBySlug($slug);
 
-        $this->ingredients = PizzaIngredientsRegistry::getAll();
+        $this->ingredients = PizzaIngredientsRegistry::list();
 
         $this->options = PizzaOptionsRegistry::pluck("name", "slug");
 

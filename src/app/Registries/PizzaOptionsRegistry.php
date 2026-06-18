@@ -8,7 +8,7 @@ use App\Models\PizzaOptions\OptionSize;
 
 class PizzaOptionsRegistry
 {
-    public static function all(): array
+    public static function list(): array
     {
         return [
             'sizes' => OptionSize::orderBy('sort_order')->get(['id', 'name', 'slug'])->toArray(),
@@ -19,12 +19,9 @@ class PizzaOptionsRegistry
 
     public static function pluck(string $value, string $key): array
     {
-        $data = self::all();
-
-        return collect($data)->map(function ($items) use ($key, $value) {
-            return collect($items)
-                ->pluck($value, $key)
-                ->toArray();
-        })->toArray();
+        return array_map(
+            fn ($items) => array_column($items, $value, $key),
+            self::list()
+        );
     }
 }

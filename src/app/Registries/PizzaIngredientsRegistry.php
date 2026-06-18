@@ -6,11 +6,26 @@ use App\Models\PizzaIngredients\Ingredient;
 
 class PizzaIngredientsRegistry
 {
-    public static function getAll(): array
+    public static function list(): array
     {
         return self::transformPrices(
-            self::baseQuery()
+            self::retrieveData()
         );
+    }
+
+    private static function retrieveData(): array
+    {
+        return Ingredient::select([
+            'id',
+            'name',
+            'slug',
+            'image_path',
+            'category_id',
+        ])
+            ->with([
+                'category:id,name,slug',
+                'prices:ingredient_id,option_size_id,price',
+            ])->get()->toArray();
     }
 
     private static function transformPrices(array $ingredients): array
@@ -28,20 +43,5 @@ class PizzaIngredientsRegistry
         }
 
         return $ingredients;
-    }
-
-    private static function baseQuery()
-    {
-        return Ingredient::select([
-            'id',
-            'name',
-            'slug',
-            'image_path',
-            'category_id',
-        ])
-            ->with([
-                'category:id,name,slug',
-                'prices:ingredient_id,option_size_id,price',
-            ])->get()->toArray();
     }
 }
