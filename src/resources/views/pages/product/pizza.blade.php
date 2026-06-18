@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\PizzaIngredients\Ingredient;
+use App\Registries\PizzaIngredientsRegistry;
 use App\Registries\PizzaOptionsRegistry;
 use App\Services\PizzaService;
 use Livewire\Component;
@@ -14,11 +14,11 @@ new class extends Component {
 
     private array $defaults;
 
-    public function mount(PizzaService $service, string $slug): void
+    public function mount(string $slug, PizzaService $service): void
     {
         $this->product = $service->getBySlug($slug);
 
-        $this->ingredients = Ingredient::detailed()->get()->toArray();
+        $this->ingredients = PizzaIngredientsRegistry::getAll();
 
         $this->options = PizzaOptionsRegistry::pluck("name", "slug");
 

@@ -22,20 +22,4 @@ class Ingredient extends Model
     {
         return $this->hasMany(IngredientsPrice::class);
     }
-
-    public function scopeDetailed($query)
-    {
-        return $query
-            ->select([
-                'id',
-                'name',
-                'slug',
-                'image_path',
-                'category_id',
-            ])
-            ->with([
-                'category:id,name,slug',
-                'prices:ingredient_id,option_size_id,price',
-            ]);
-    }
 }
