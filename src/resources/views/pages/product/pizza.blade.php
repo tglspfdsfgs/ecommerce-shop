@@ -22,6 +22,11 @@ new class extends Component {
 
         $this->options = PizzaOptionsRegistry::pluck("name", "slug");
 
+        $this->initializeDefaults();
+    }
+
+    private function initializeDefaults(): void
+    {
         $values = $this->product["variants"];
 
         $size = $this->getFirstSize($values);
