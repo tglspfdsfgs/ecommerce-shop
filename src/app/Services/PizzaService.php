@@ -20,17 +20,20 @@ class PizzaService
     {
         $pizza = $this->baseQuery()
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->firstOrFail()
+            ->toArray();
 
-        return $this->transform($pizza)->toArray();
+        return $this->transform($pizza);
     }
 
     public function getAll(): array
     {
-        return $this->baseQuery()
-            ->get()
-            ->map(fn ($pizza) => $this->transform($pizza))
-            ->toArray();
+        $pizzas = $this->baseQuery()->get()->toArray();
+
+        return array_map(
+            fn ($pizza) => $this->transform($pizza),
+            $pizzas
+        );
     }
 
     private function baseQuery()
@@ -50,7 +53,7 @@ class PizzaService
             ]);
     }
 
-    private function transform(Pizza $pizza): Pizza
+    private function transform(array &$pizza): array
     {
         $this->transformComposition($pizza);
 
@@ -61,42 +64,43 @@ class PizzaService
         return $pizza;
     }
 
-    private function transformComposition(Pizza $pizza): void
+    private function transformComposition(array &$pizza): void
     {
-        $pizza->setRelation(
-            'composition',
-            $pizza->composition->map(fn ($i) => [
-                'id' => $i->id,
-                'name' => $i->name,
-                'slug' => $i->slug,
-                'quantity' => $i->pivot->quantity,
-            ])->values()
-        );
+        $composition = [];
+
+        foreach ($pizza['composition'] as $ingredient) {
+            $composition[] = [
+                'id' => $ingredient['id'],
+                'name' => $ingredient['name'],
+                'slug' => $ingredient['slug'],
+                'quantity' => $ingredient['pivot']['quantity'],
+            ];
+        }
+
+        $pizza['composition'] = $composition;
     }
 
-    public function transformVariants(Pizza $pizza): void
+    private function transformVariants(array &$pizza): void
     {
-        $pizza->setRelation(
-            'variants',
-            $pizza->variants
-                ->groupBy(fn ($v) => $this->optionSlugs['sizes'][$v->option_size_id])
-                ->map(fn ($sizeGroup) => $sizeGroup
-                    ->groupBy(fn ($v) => $this->optionSlugs['doughs'][$v->option_dough_id])
-                    ->map(fn ($doughGroup) => $doughGroup
-                        ->mapWithKeys(fn ($v) => [
-                            $this->optionSlugs['crusts'][$v->option_crust_id] => [
-                                'price' => $v->price,
-                                'weight' => $v->weight,
-                            ],
-                        ])
-                    )
-                )
-        );
+        $variants = [];
+
+        foreach ($pizza['variants'] as $variant) {
+            $size = $this->optionSlugs['sizes'][$variant['option_size_id']];
+            $dough = $this->optionSlugs['doughs'][$variant['option_dough_id']];
+            $crust = $this->optionSlugs['crusts'][$variant['option_crust_id']];
+
+            $variants[$size][$dough][$crust] = [
+                'price' => $variant['price'],
+                'weight' => $variant['weight'],
+            ];
+        }
+
+        $pizza['variants'] = $variants;
     }
 
-    private function appendDefaults(Pizza $pizza): void
+    private function appendDefaults(array &$pizza): void
     {
-        $variants = $pizza->variants;
+        $variants = $pizza['variants'];
 
         $size = $this->firstAvailableOption($this->orderedOptions['sizes'], $variants);
 
@@ -104,13 +108,13 @@ class PizzaService
 
         $crust = $this->firstAvailableOption($this->orderedOptions['crusts'], $variants[$size][$dough]);
 
-        $pizza->setAttribute('defaults', [
+        $pizza['defaults'] = [
             'size' => $size,
             'dough' => $dough,
             'crust' => $crust,
             'price' => $variants[$size][$dough][$crust]['price'],
             'weight' => $variants[$size][$dough][$crust]['weight'],
-        ]);
+        ];
     }
 
     private function firstAvailableOption(array $ordered, $data): string
