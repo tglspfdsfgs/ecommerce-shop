@@ -10,7 +10,7 @@ class PizzaService
     private array $optionSlugs;
     private array $orderedOptions;
 
-    public function __construct()
+    private function initializeRegistries(): void
     {
         $this->optionSlugs = PizzaOptionsRegistry::pluck('slug', 'id');
         $this->orderedOptions = PizzaOptionsRegistry::list();
@@ -55,6 +55,8 @@ class PizzaService
 
     private function transform(array &$pizza): array
     {
+        $this->initializeRegistries();
+
         $this->transformComposition($pizza);
 
         $this->transformVariants($pizza);
