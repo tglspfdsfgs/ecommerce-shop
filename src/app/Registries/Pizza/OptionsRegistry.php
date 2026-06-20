@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Registries;
+namespace App\Registries\Pizza;
 
-use App\Models\PizzaOptions\OptionCrust;
-use App\Models\PizzaOptions\OptionDough;
-use App\Models\PizzaOptions\OptionSize;
+use App\Models\Products\Pizza\Options\OptionCrust;
+use App\Models\Products\Pizza\Options\OptionDough;
+use App\Models\Products\Pizza\Options\OptionSize;
 
-class PizzaOptionsRegistry
+class OptionsRegistry
 {
     public static function list(): array
     {

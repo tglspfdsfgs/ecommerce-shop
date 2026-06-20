@@ -1,7 +1,7 @@
 <?php
 
-use App\Registries\PizzaIngredientsRegistry;
-use App\Registries\PizzaOptionsRegistry;
+use App\Registries\Pizza\IngredientsRegistry;
+use App\Registries\Pizza\OptionsRegistry;
 use App\Services\PizzaService;
 use Livewire\Component;
 
@@ -16,9 +16,9 @@ new class extends Component {
     {
         $this->product = $service->getBySlug($slug);
 
-        $this->ingredients = PizzaIngredientsRegistry::list();
+        $this->ingredients = IngredientsRegistry::list();
 
-        $this->options = PizzaOptionsRegistry::pluck("name", "slug");
+        $this->options = OptionsRegistry::pluck("name", "slug");
     }
 };
 ?>

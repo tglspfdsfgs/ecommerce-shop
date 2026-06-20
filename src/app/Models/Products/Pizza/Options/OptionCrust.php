@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\PizzaOptions;
+namespace App\Models\Products\Pizza\Options;
 
 use App\Models\Sluggable;
 use Illuminate\Database\Eloquent\Model;

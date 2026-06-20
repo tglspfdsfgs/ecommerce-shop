@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\PizzaOptions;
+namespace App\Models\Products\Pizza\Options;
 
 use App\Models\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 
-class OptionSize extends Model
+class OptionDough extends Model
 {
     use BaseOption;
     use Sluggable;

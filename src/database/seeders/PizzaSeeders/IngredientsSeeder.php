@@ -1,14 +1,14 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\PizzaSeeders;
 
-use App\Models\PizzaIngredients\Ingredient;
-use App\Models\PizzaIngredients\IngredientsCategory;
-use App\Models\PizzaIngredients\IngredientsPrice;
-use App\Models\PizzaOptions\OptionSize;
+use App\Models\Products\Pizza\Ingredients\Ingredient;
+use App\Models\Products\Pizza\Ingredients\IngredientsCategory;
+use App\Models\Products\Pizza\Ingredients\IngredientsPrice;
+use App\Models\Products\Pizza\Options\OptionSize;
 use Illuminate\Database\Seeder;
 
-class PizzaIngredientsSeeder extends Seeder
+class IngredientsSeeder extends Seeder
 {
     private array $configuration = [
         'Cheese' => [

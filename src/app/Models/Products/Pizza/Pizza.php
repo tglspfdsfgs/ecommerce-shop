@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Models\Products;
+namespace App\Models\Products\Pizza;
 
-use App\Models\PizzaIngredients\Ingredient;
-use App\Models\PizzaVariant;
+use App\Models\Products\Pizza\Ingredients\Ingredient;
 use App\Models\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -21,7 +20,7 @@ class Pizza extends Model
 
     public function composition(): BelongsToMany
     {
-        return $this->belongsToMany(Ingredient::class, 'compositions')
+        return $this->belongsToMany(Ingredient::class, PizzaComposition::class)
             ->withPivot('quantity');
     }
 

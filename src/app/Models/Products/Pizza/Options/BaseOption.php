@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\PizzaOptions;
+namespace App\Models\Products\Pizza\Options;
 
 trait BaseOption
 {

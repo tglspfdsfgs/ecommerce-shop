@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Registries;
+namespace App\Registries\Pizza;
 
-use App\Models\PizzaIngredients\Ingredient;
+use App\Models\Products\Pizza\Ingredients\Ingredient;
 
-class PizzaIngredientsRegistry
+class IngredientsRegistry
 {
     public static function list(): array
     {
@@ -30,7 +30,7 @@ class PizzaIngredientsRegistry
 
     private static function transformPrices(array $ingredients): array
     {
-        $sizes = PizzaOptionsRegistry::pluck('slug', 'id')['sizes'];
+        $sizes = OptionsRegistry::pluck('slug', 'id')['sizes'];
 
         foreach ($ingredients as &$ingredient) {
             $prices = [];

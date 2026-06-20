@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Products\Pizza;
-use App\Registries\PizzaOptionsRegistry;
+use App\Models\Products\Pizza\Pizza;
+use App\Registries\Pizza\OptionsRegistry;
 
 class PizzaService
 {
@@ -12,8 +12,8 @@ class PizzaService
 
     private function initializeRegistries(): void
     {
-        $this->optionSlugs = PizzaOptionsRegistry::pluck('slug', 'id');
-        $this->orderedOptions = PizzaOptionsRegistry::list();
+        $this->optionSlugs = OptionsRegistry::pluck('slug', 'id');
+        $this->orderedOptions = OptionsRegistry::list();
     }
 
     public function getBySlug(string $slug): array

@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\PizzaSeeders;
 
-use App\Models\PizzaVariant;
-use App\Models\Products\Pizza;
-use App\Registries\PizzaOptionsRegistry;
+use App\Models\Products\Pizza\Pizza;
+use App\Models\Products\Pizza\PizzaVariant;
+use App\Registries\Pizza\OptionsRegistry;
 use Illuminate\Database\Seeder;
 
-class ProductSeeder extends Seeder
+class PizzaSeeder extends Seeder
 {
     private array $optionIDs;
 
@@ -113,7 +113,7 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        $this->optionIDs = PizzaOptionsRegistry::pluck('id', 'name');
+        $this->optionIDs = OptionsRegistry::pluck('id', 'name');
 
         foreach ($variants as $sizeName => $doughsData) {
             foreach ($doughsData as $doughName => $crustsData) {
