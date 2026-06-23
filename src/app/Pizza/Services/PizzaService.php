@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Pizza\Services;
 
-use App\Models\Products\Pizza\Pizza;
-use App\Registries\Pizza\OptionsRegistry;
+use App\Pizza\Models\Pizza;
+use App\Pizza\Registries\OptionsRegistry;
 
 class PizzaService
 {

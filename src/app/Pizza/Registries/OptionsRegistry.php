@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Registries\Pizza;
+namespace App\Pizza\Registries;
 
-use App\Models\Products\Pizza\Options\OptionCrust;
-use App\Models\Products\Pizza\Options\OptionDough;
-use App\Models\Products\Pizza\Options\OptionSize;
+use App\Pizza\Models\Options\OptionCrust;
+use App\Pizza\Models\Options\OptionDough;
+use App\Pizza\Models\Options\OptionSize;
 
 class OptionsRegistry
 {

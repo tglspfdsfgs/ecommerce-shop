@@ -2,9 +2,9 @@
 
 namespace Database\Seeders\PizzaSeeders;
 
-use App\Models\Products\Pizza\Options\OptionCrust;
-use App\Models\Products\Pizza\Options\OptionDough;
-use App\Models\Products\Pizza\Options\OptionSize;
+use App\Pizza\Models\Options\OptionCrust;
+use App\Pizza\Models\Options\OptionDough;
+use App\Pizza\Models\Options\OptionSize;
 use Illuminate\Database\Seeder;
 
 class OptionsSeeder extends Seeder

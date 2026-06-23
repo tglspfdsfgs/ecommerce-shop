@@ -1,8 +1,8 @@
 <?php
 
-use App\Registries\Pizza\IngredientsRegistry;
-use App\Registries\Pizza\OptionsRegistry;
-use App\Services\PizzaService;
+use App\Pizza\Registries\IngredientsRegistry;
+use App\Pizza\Registries\OptionsRegistry;
+use App\Pizza\Services\PizzaService;
 use Livewire\Component;
 
 new class extends Component {
@@ -23,6 +23,8 @@ new class extends Component {
         $this->groupedIngrediends = IngredientsRegistry::grouped();
 
         $this->options = OptionsRegistry::pluck("name", "slug");
+
+        dd($this->product);
     }
 };
 ?>

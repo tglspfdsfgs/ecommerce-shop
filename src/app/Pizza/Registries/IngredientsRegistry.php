@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Registries\Pizza;
+namespace App\Pizza\Registries;
 
-use App\Models\Products\Pizza\Ingredients\Ingredient;
+use App\Pizza\Models\Ingredients\Ingredient;
 
 class IngredientsRegistry
 {

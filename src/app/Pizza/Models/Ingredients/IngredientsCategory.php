@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\Products\Pizza\Ingredients;
+namespace App\Pizza\Models\Ingredients;
 
-use App\Models\Sluggable;
+use App\Shared\Models\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 
 class IngredientsCategory extends Model

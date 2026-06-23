@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models\Products\Pizza;
+namespace App\Pizza\Models;
 
-use App\Models\Products\Pizza\Ingredients\Ingredient;
-use App\Models\Sluggable;
+use App\Pizza\Models\Ingredients\Ingredient;
+use App\Shared\Models\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;

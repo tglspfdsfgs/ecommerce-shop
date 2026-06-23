@@ -2,9 +2,9 @@
 
 namespace Database\Seeders\PizzaSeeders;
 
-use App\Models\Products\Pizza\Pizza;
-use App\Models\Products\Pizza\PizzaVariant;
-use App\Registries\Pizza\OptionsRegistry;
+use App\Pizza\Models\Pizza;
+use App\Pizza\Models\PizzaVariant;
+use App\Pizza\Registries\OptionsRegistry;
 use Illuminate\Database\Seeder;
 
 class PizzaSeeder extends Seeder

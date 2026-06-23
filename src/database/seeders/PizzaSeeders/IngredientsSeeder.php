@@ -2,10 +2,10 @@
 
 namespace Database\Seeders\PizzaSeeders;
 
-use App\Models\Products\Pizza\Ingredients\Ingredient;
-use App\Models\Products\Pizza\Ingredients\IngredientsCategory;
-use App\Models\Products\Pizza\Ingredients\IngredientsPrice;
-use App\Models\Products\Pizza\Options\OptionSize;
+use App\Pizza\Models\Ingredients\Ingredient;
+use App\Pizza\Models\Ingredients\IngredientsCategory;
+use App\Pizza\Models\Ingredients\IngredientsPrice;
+use App\Pizza\Models\Options\OptionSize;
 use Illuminate\Database\Seeder;
 
 class IngredientsSeeder extends Seeder

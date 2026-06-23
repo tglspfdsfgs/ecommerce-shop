@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\Products\Pizza\Options;
+namespace App\Pizza\Models\Options;
 
-use App\Models\Sluggable;
+use App\Shared\Models\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 
 class OptionDough extends Model
