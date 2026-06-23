@@ -8,9 +8,41 @@ class IngredientsRegistry
 {
     public static function list(): array
     {
-        return self::transformPrices(
-            self::retrieveData()
+        return self::retrieveData()
+                |> self::transformPrices(...)
+                |> self::generateImageURLs(...);
+    }
+
+    public static function bySlug(): array
+    {
+        return array_column(
+            self::list(),
+            null,
+            'slug'
         );
+    }
+
+    public static function grouped(): array
+    {
+        $result = [];
+
+        foreach (self::bySlug() as $slug => $ingredient) {
+            $categorySlug = $ingredient['category']['slug'];
+
+            if (! isset($result[$categorySlug])) {
+                $result[$categorySlug] = [
+                    'id' => $ingredient['category']['id'],
+                    'name' => $ingredient['category']['name'],
+                    'slug' => $categorySlug,
+                    'ingredients' => [],
+                ];
+            }
+            unset($ingredient['category']);
+
+            $result[$categorySlug]['ingredients'][$slug] = $ingredient;
+        }
+
+        return $result;
     }
 
     private static function retrieveData(): array
@@ -40,6 +72,16 @@ class IngredientsRegistry
             }
 
             $ingredient['prices'] = $prices;
+        }
+
+        return $ingredients;
+    }
+
+    private static function generateImageURLs(array $ingredients): array
+    {
+        foreach ($ingredients as &$ingredient) {
+            $ingredient['image_url'] = asset($ingredient['image_path']);
+            unset($ingredient['image_path']);
         }
 
         return $ingredients;

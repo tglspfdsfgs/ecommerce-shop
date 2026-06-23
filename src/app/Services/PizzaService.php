@@ -48,7 +48,7 @@ class PizzaService
             'labels',
         ])
             ->with([
-                'composition:id,name,slug',
+                'composition:slug',
                 'variants:pizza_id,option_size_id,option_dough_id,option_crust_id,price,weight',
             ]);
     }
@@ -71,12 +71,7 @@ class PizzaService
         $composition = [];
 
         foreach ($pizza['composition'] as $ingredient) {
-            $composition[] = [
-                'id' => $ingredient['id'],
-                'name' => $ingredient['name'],
-                'slug' => $ingredient['slug'],
-                'quantity' => $ingredient['pivot']['quantity'],
-            ];
+            $composition[$ingredient['slug']] = $ingredient['pivot']['quantity'];
         }
 
         $pizza['composition'] = $composition;
