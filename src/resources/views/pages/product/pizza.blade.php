@@ -1,6 +1,5 @@
 <?php
 
-use App\Pizza\Registries\IngredientsRegistry;
 use App\Pizza\Registries\OptionsRegistry;
 use App\Pizza\Services\PizzaService;
 use Livewire\Component;
@@ -8,23 +7,13 @@ use Livewire\Component;
 new class extends Component {
     public array $product;
 
-    public array $options;
-
-    public array $ingredients;
-
-    public array $groupedIngrediends;
+    private array $options;
 
     public function mount(string $slug, PizzaService $service): void
     {
         $this->product = $service->getBySlug($slug);
 
-        $this->ingredients = IngredientsRegistry::bySlug();
-
-        $this->groupedIngrediends = IngredientsRegistry::grouped();
-
         $this->options = OptionsRegistry::pluck("name", "slug");
-
-        dd($this->product);
     }
 };
 ?>
@@ -41,25 +30,9 @@ new class extends Component {
 
     composition: @json($product["composition"]),
 
-    addToComposition(ingredient) {
-        this.composition[ingredient.slug] = 1;
-    },
-
-    increaseIngredient(ingredient) {
-        this.composition[ingredient.slug]++;
-    },
-
-    decreaseIngredient(ingredient) {
-        if (this.composition[ingredient.slug] !== 1) {
-            this.composition[ingredient.slug]--;
-        } else {
-            delete this.composition[ingredient.slug]
-        }
-    },
-
     order: {
-        doughs: @json(array_keys($options["doughs"])),
-        crusts: @json(array_keys($options["crusts"])),
+        doughs: @json(array_keys($this->options["doughs"])),
+        crusts: @json(array_keys($this->options["crusts"])),
     },
 
     getFirstDough() {
@@ -123,14 +96,14 @@ new class extends Component {
                     <div>
                         <div class="mb-2">
                             <div class="mb-1">Size:</div>
-                            @foreach ($options["sizes"] as $sizeSlug => $sizeName)
+                            @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
                                 <input type="radio" @disabled(!array_key_exists($sizeSlug, $product["variants"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $sizeName }}" x-model="size" />
                             @endforeach
                         </div>
                         <div class="mb-2">
                             <div class="mb-1">Dough:</div>
-                            @foreach ($options["doughs"] as $doughSlug => $doughName)
+                            @foreach ($this->options["doughs"] as $doughSlug => $doughName)
                                 <input type="radio" x-model="dough" :checked="dough === '{{ $doughSlug }}'" value="{{ $doughSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $doughName }}"
                                     :class="{ 'btn-disabled': !values?.[size]?.['{{ $doughSlug }}'] }" />
@@ -138,149 +111,16 @@ new class extends Component {
                         </div>
                         <div class="mb-2">
                             <div class="mb-1">Crust:</div>
-                            @foreach ($options["crusts"] as $crustSlug => $crustName)
+                            @foreach ($this->options["crusts"] as $crustSlug => $crustName)
                                 <input type="radio" x-model="crust" :checked="crust === '{{ $crustSlug }}'" value="{{ $crustSlug }}"
                                     class="btn btn-sm checked:btn-info mb-1.5" :class="{ 'btn-disabled': !values?.[size]?.[dough]?.['{{ $crustSlug }}'] }"
                                     aria-label="{{ $crustName }}" />
                             @endforeach
                         </div>
 
-                        <div class="mb-3">
-                            <div class="text-lg font-bold">Pizza ingredients</div>
-                            <div>Two free replacements available</div>
+                        <x-blocks.ingredient-bars.current-ingredients x-model="composition" />
 
-                            <div class="relative">
-                                <div x-data="{
-                                    init() {
-                                            const observer = new ResizeObserver(() => {
-                                                this.checkSlider();
-                                            });
-                                
-                                            observer.observe($refs.slider);
-                                
-                                            this.checkSlider();
-                                        },
-                                        canScroll: false,
-                                        checkSlider() {
-                                            this.$nextTick(() => {
-                                                this.canScroll =
-                                                    this.$refs.slider.scrollWidth >
-                                                    this.$refs.slider.clientWidth + 1;
-                                            });
-                                        },
-                                }" class="flex overflow-x-auto" x-ref="slider">
-                                    <button x-cloak x-show="canScroll"
-                                        @click="$refs.slider.scrollBy({
-                                                    left: $refs.slider.querySelector('.ingredient').offsetWidth,
-                                                    behavior: 'smooth'
-                                                })"
-                                        class="btn btn-circle bg-base-300/75 btn-sm absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-md">
-                                        ❯
-                                    </button>
-                                    <button x-cloak x-show="canScroll"
-                                        @click="refs.slider.scrollBy({
-                                                    left: -$refs.slider.querySelector('.ingredient').offsetWidth,
-                                                    behavior: 'smooth'
-                                                })"
-                                        class="btn btn-circle bg-base-300/75 btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-md">
-                                        ❮
-                                    </button>
-                                    <template x-for="(quantity, slug) in composition" :key="slug">
-                                        <div class="ingredient px-0.5">
-                                            <div
-                                                class="w-35 h-35 relative flex flex-col items-center justify-normal gap-0.5 overflow-hidden rounded-sm border-2 border-stone-300 bg-white">
-                                                <div class="h-15 w-15 mt-1.5 flex items-center">
-                                                    <img class="w-full align-middle" :src="$wire.ingredients[slug].image_url">
-                                                </div>
-                                                <span class="mx-1 text-center text-sm" x-text="$wire.ingredients[slug].name"></span>
-                                                <span
-                                                    class="bg-base-200/75 absolute bottom-0 mb-1 flex h-1/4 w-[93%] items-center justify-between rounded-md px-1">
-
-                                                    <button type="button" @click="decreaseIngredient($wire.ingredients[slug])">
-                                                        <x-assets.ui.trash />
-                                                    </button>
-
-                                                    <span x-text="quantity"></span>
-
-                                                    <button type="button" @click="increaseIngredient($wire.ingredients[slug])">
-                                                        <x-assets.ui.plus />
-                                                    </button>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div x-data='{
-                                show: @json(array_first($groupedIngrediends)["slug"]),}'>
-                            <div class="text-lg font-bold">Add ingredients</div>
-                            <div class="my-2">
-                                @foreach ($groupedIngrediends as $category)
-                                    <input type="radio" :checked="show === '{{ $category["slug"] }}'" value="{{ $category["slug"] }}"
-                                        class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $category["name"] }}" x-model="show" />
-                                @endforeach
-                            </div>
-                            <div class="relative w-auto">
-                                <template x-for="category in $wire.groupedIngrediends" :key="category.slug">
-                                    <div x-data="{
-                                        init() {
-                                                const observer = new ResizeObserver(() => {
-                                                    this.checkSlider();
-                                                });
-                                    
-                                                observer.observe($refs.slider);
-                                    
-                                                this.checkSlider();
-                                            },
-                                            canScroll: false,
-                                            checkSlider() {
-                                                this.$nextTick(() => {
-                                                    this.canScroll =
-                                                        this.$refs.slider.scrollWidth >
-                                                        this.$refs.slider.clientWidth + 1;
-                                                });
-                                            },
-                                    }" x-ref="slider" x-show="show === category.slug" class="flex overflow-x-auto">
-                                        <button x-cloak x-show="canScroll"
-                                            @click="$refs.slider.scrollBy({
-                                                    left: $refs.slider.querySelector('.ingredient').offsetWidth,
-                                                    behavior: 'smooth'
-                                                })"
-                                            class="btn btn-circle bg-base-300/75 btn-sm absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-md">
-                                            ❯
-                                        </button>
-                                        <button x-cloak x-show="canScroll"
-                                            @click="$refs.slider.scrollBy({
-                                                    left: -$refs.slider.querySelector('.ingredient').offsetWidth,
-                                                    behavior: 'smooth'
-                                                    })"
-                                            class="btn btn-circle bg-base-300/75 btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-md">
-                                            ❮
-                                        </button>
-                                        <template x-for="(ingredient, slug) in category.ingredients" :key="slug">
-
-                                            <div :class="{ 'hidden': composition[slug] }" class="ingredient snap-start px-0.5">
-                                                <div
-                                                    class="w-35 h-35 relative flex flex-col items-center justify-normal gap-0.5 overflow-hidden rounded-sm border-2 border-stone-300 bg-white">
-                                                    <div class="h-15 w-15 mt-1.5 flex items-center">
-                                                        <img class="w-full align-middle" :src="ingredient.image_url">
-                                                    </div>
-                                                    <span class="mx-1 text-center text-sm" x-text="ingredient.name"></span>
-
-                                                    <button class="bg-base-200/75 absolute bottom-1 right-1 block rounded-md p-1 align-middle" type="button"
-                                                        @click="addToComposition(ingredient)">
-                                                        <x-assets.ui.plus />
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
+                        <x-blocks.ingredient-bars.add-ingredient x-model="composition" />
                     </div>
                 </div>
             </div>
