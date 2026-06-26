@@ -34,6 +34,8 @@ class IngredientsRegistry
                     'id' => $ingredient['category']['id'],
                     'name' => $ingredient['category']['name'],
                     'slug' => $categorySlug,
+                    'exclusive' => $ingredient['category']['exclusive'],
+                    'max_per_ingredient' => $ingredient['category']['max_per_ingredient'],
                     'ingredients' => [],
                 ];
             }
@@ -55,7 +57,7 @@ class IngredientsRegistry
             'category_id',
         ])
             ->with([
-                'category:id,name,slug',
+                'category:id,name,slug,exclusive,max_per_ingredient',
                 'prices:ingredient_id,option_size_id,price',
             ])->get()->toArray();
     }

@@ -1,28 +1,64 @@
 @php
     use App\Pizza\Registries\IngredientsRegistry;
+    use App\Pizza\Rules\IngredientRules;
     $ingredients = IngredientsRegistry::bySlug();
 @endphp
 
 <div x-data='{
         compositionState: {},
 
+        totalCount: 0,
+
+        max_total: @json(IngredientRules::MAX_TOTAL),
+
         ingredients: @json($ingredients),
 
+        countTotal() {
+            this.totalCount = Object.values(this.compositionState).reduce((sum, curr) => sum + curr, 0);
+        },
+
+        canIncrease(ingredient) {
+            if (this.compositionState[ingredient.slug] < ingredient.category.max_per_ingredient
+                 && this.totalCount < this.max_total) {
+                    return true
+                }
+            return false;
+        },
+
         increaseIngredient(ingredient) {
-            this.compositionState[ingredient.slug]++;
+            if (this.canIncrease(ingredient)) {
+                this.compositionState[ingredient.slug]++;
+            }
         },
 
         decreaseIngredient(ingredient) {
-            if (this.composition[ingredient.slug] !== 1) {
-                this.composition[ingredient.slug]--;
+            if (this.composition[ingredient.slug] === 1) {
+                delete this.compositionState[ingredient.slug];
             } else {
-                delete this.compositionState[ingredient.slug]
+                this.composition[ingredient.slug]--;
             }
+        },
+
+        init() {
+            $watch(`compositionState`, () => {
+                this.countTotal();
+            });
         },
     }'
     {{ $attributes->only(["x-model"]) }} x-modelable="compositionState" class="mb-3">
     <div class="text-lg font-bold">Pizza ingredients</div>
-    <div>Two free replacements available</div>
+    <div class="mb-2">
+        <span>Two free replacements available</span>
+        <div class="tooltip tooltip-bottom">
+            <div class="tooltip-content max-w-50 wrap-break-word rounded-md">
+                <div>
+                    You can replace the current ingredient with something similar to it (For example, meat for meat, vegetables for vegetables, cheese for
+                    cheese)
+                </div>
+            </div>
+            <div class="badge badge-ghost badge-sm ml-auto">Details</div>
+        </div>
+    </div>
 
     <div class="relative">
         <div x-data="{
@@ -47,18 +83,12 @@
                 },
         }" class="flex overflow-x-auto" x-ref="slider">
             <button x-cloak x-show="canScroll"
-                @click="$refs.slider.scrollBy({
-                                                    left: $refs.slider.querySelector('.ingredient').offsetWidth,
-                                                    behavior: 'smooth'
-                                                })"
+                @click="$refs.slider.scrollBy({ left: $refs.slider.querySelector('.ingredient').offsetWidth, behavior: 'smooth'})"
                 class="btn btn-circle bg-base-300/75 btn-sm absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-md">
                 ❯
             </button>
             <button x-cloak x-show="canScroll"
-                @click="refs.slider.scrollBy({
-                                                    left: -$refs.slider.querySelector('.ingredient').offsetWidth,
-                                                    behavior: 'smooth'
-                                                })"
+                @click="$refs.slider.scrollBy({ left: -$refs.slider.querySelector('.ingredient').offsetWidth, behavior: 'smooth' })"
                 class="btn btn-circle bg-base-300/75 btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-md">
                 ❮
             </button>
@@ -78,7 +108,8 @@
 
                             <span x-text="quantity"></span>
 
-                            <button type="button" @click="increaseIngredient(ingredients[slug])">
+                            <button type="button" @click="increaseIngredient(ingredients[slug])"
+                                :class="{ 'cursor-not-allowed': !canIncrease(ingredients[slug]) }">
                                 <x-assets.ui.plus />
                             </button>
                         </span>

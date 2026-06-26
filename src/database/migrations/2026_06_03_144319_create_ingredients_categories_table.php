@@ -16,6 +16,9 @@ return new class extends Migration {
             $table->string('name');
             $table->string('slug')->unique();
 
+            $table->unsignedInteger('max_per_ingredient')->default(3);
+            $table->boolean('exclusive')->default(false);
+
             $table->timestamps();
         });
     }

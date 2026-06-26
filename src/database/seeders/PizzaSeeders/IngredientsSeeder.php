@@ -76,6 +76,13 @@ class IngredientsSeeder extends Seeder
 
             $this->categoryIds[$category] = $model->id;
         }
+
+        IngredientsCategory::where('name', 'Sauces')
+            ->firstOrFail()
+            ->update([
+                'exclusive' => true,
+                'max_per_ingredient' => 2,
+            ]);
     }
 
     private function seedIngredients(): void

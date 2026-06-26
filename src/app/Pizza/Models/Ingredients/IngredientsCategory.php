@@ -9,5 +9,7 @@ class IngredientsCategory extends Model
 {
     use Sluggable;
 
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'exclusive', 'max_per_ingredient'];
+
+    protected $casts = ['exclusive' => 'boolean'];
 }
