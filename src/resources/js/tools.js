@@ -48,15 +48,12 @@ export class PizzaStateController {
 }
 
 export class PizzaConfig {
-    static ingredients;
-    static groupedIngrediends;
-    static ingredientRules;
-    static optionsOrder;
-
-    static initialize(ingredients, groupedIngrediends, ingredientRules, optionsOrder) {
-        this.ingredients = ingredients;
-        this.groupedIngrediends = groupedIngrediends;
-        this.ingredientRules = ingredientRules;
-        this.optionsOrder = optionsOrder;
+    static initialize({ ingredients, groupedIngrediends, ingredientRules, optionsOrder }) {
+        Object.assign(this, {
+            ingredients,
+            groupedIngrediends,
+            ingredientRules,
+            optionsOrder,
+        });
     }
 }

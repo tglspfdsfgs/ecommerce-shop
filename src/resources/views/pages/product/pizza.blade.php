@@ -21,15 +21,15 @@ new class extends Component {
 <div
     x-data='{
     init() {
-        PizzaConfig.initialize(
-            @json(App\Pizza\Registries\IngredientsRegistry::bySlug()),
-            @json(App\Pizza\Registries\IngredientsRegistry::grouped()),
-            @json(App\Pizza\Rules\IngredientRules::toArray()),
-            {
+        PizzaConfig.initialize({
+            ingredients: @json(App\Pizza\Registries\IngredientsRegistry::bySlug()),
+            groupedIngrediends: @json(App\Pizza\Registries\IngredientsRegistry::grouped()),
+            ingredientRules: @json(App\Pizza\Rules\IngredientRules::toArray()),
+            optionsOrder: {
                 doughs: @json(array_keys($this->options["doughs"])),
                 crusts: @json(array_keys($this->options["crusts"]))
             },
-        );
+        });
     }
 }'>
     <livewire:layout.header />
