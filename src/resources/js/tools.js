@@ -1,6 +1,6 @@
 export class PizzaStateController {
-    constructor(registries, variants) {
-        this.registries = registries;
+    constructor(config, variants) {
+        this.config = config;
         this.variants = variants;
     }
 
@@ -31,11 +31,11 @@ export class PizzaStateController {
     }
 
     getFirstDough(size) {
-        return this.registries.optionsOrder.doughs.find((d) => this.variants[size]?.[d]);
+        return this.config.optionsOrder.doughs.find((d) => this.variants[size]?.[d]);
     }
 
     getFirstCrust(size, dough) {
-        return this.registries.optionsOrder.crusts.find((c) => this.variants[size]?.[dough]?.[c]);
+        return this.config.optionsOrder.crusts.find((c) => this.variants[size]?.[dough]?.[c]);
     }
 
     countPrice(size, dough, crust) {
@@ -47,12 +47,16 @@ export class PizzaStateController {
     }
 }
 
-export class PizzaRegistries {
+export class PizzaConfig {
     static ingredients;
+    static groupedIngrediends;
+    static ingredientRules;
     static optionsOrder;
 
-    static register(ingredients, optionsOrder) {
+    static initialize(ingredients, groupedIngrediends, ingredientRules, optionsOrder) {
         this.ingredients = ingredients;
+        this.groupedIngrediends = groupedIngrediends;
+        this.ingredientRules = ingredientRules;
         this.optionsOrder = optionsOrder;
     }
 }

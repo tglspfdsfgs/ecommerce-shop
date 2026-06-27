@@ -1,17 +1,11 @@
-@php
-    use App\Pizza\Registries\IngredientsRegistry;
-    use App\Pizza\Rules\IngredientRules;
-    $ingredients = IngredientsRegistry::bySlug();
-@endphp
-
 <div x-data='{
         compositionState: {},
 
         totalCount: 0,
 
-        max_total: @json(IngredientRules::MAX_TOTAL),
+        max_total: PizzaConfig.ingredientRules.max_total,
 
-        ingredients: @json($ingredients),
+        ingredients: PizzaConfig.ingredients,
 
         countTotal() {
             this.totalCount = Object.values(this.compositionState).reduce((sum, curr) => sum + curr, 0);

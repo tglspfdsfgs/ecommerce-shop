@@ -1,17 +1,11 @@
-@php
-    use App\Pizza\Registries\IngredientsRegistry;
-    use App\Pizza\Rules\IngredientRules;
-    $groupedIngrediends = IngredientsRegistry::grouped();
-@endphp
-
 <div x-data='{
         compositionState: {},
 
-        groupedIngrediends: @json($groupedIngrediends),
+        groupedIngrediends: PizzaConfig.groupedIngrediends,
 
-        showedCategory: @json(array_first($groupedIngrediends)["slug"]),
+        showedCategory: Object.keys(PizzaConfig.groupedIngrediends)[0],
 
-        max_total: @json(IngredientRules::MAX_TOTAL),
+        max_total: PizzaConfig.ingredientRules.max_total,
 
         totalCount: 0,
 
@@ -45,10 +39,10 @@
     {{ $attributes->only(["x-model"]) }} x-modelable="compositionState">
     <div class="text-lg font-bold">Add ingredients</div>
     <div class="my-2">
-        @foreach ($groupedIngrediends as $category)
-            <input type="radio" :checked="showedCategory === '{{ $category["slug"] }}'" value="{{ $category["slug"] }}" class="btn btn-sm checked:btn-info mb-1.5"
-                aria-label="{{ $category["name"] }}" x-model="showedCategory" />
-        @endforeach
+        <template x-for="category in groupedIngrediends" :key="category.id">
+            <input type="radio" :checked="showedCategory === category.slug" :value="category.slug" class="btn btn-sm checked:btn-info mb-1.5 mr-1"
+                :aria-label="category.name" x-model="showedCategory" />
+        </template>
     </div>
     <div class="relative w-auto">
         <template x-for="category in groupedIngrediends" :key="category.slug">

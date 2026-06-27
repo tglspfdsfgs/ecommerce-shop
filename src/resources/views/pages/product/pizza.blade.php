@@ -1,6 +1,5 @@
 <?php
 
-use App\Pizza\Registries\IngredientsRegistry;
 use App\Pizza\Registries\OptionsRegistry;
 use App\Pizza\Services\PizzaService;
 use Livewire\Component;
@@ -10,15 +9,11 @@ new class extends Component {
 
     private array $options;
 
-    private array $ingredients;
-
     public function mount(string $slug, PizzaService $service): void
     {
         $this->product = $service->getBySlug($slug);
 
         $this->options = OptionsRegistry::pluck("name", "slug");
-
-        $this->ingredients = IngredientsRegistry::bySlug();
     }
 };
 ?>
@@ -26,8 +21,10 @@ new class extends Component {
 <div
     x-data='{
     init() {
-        PizzaRegistries.register(
-            @json(IngredientsRegistry::bySlug()),
+        PizzaConfig.initialize(
+            @json(App\Pizza\Registries\IngredientsRegistry::bySlug()),
+            @json(App\Pizza\Registries\IngredientsRegistry::grouped()),
+            @json(App\Pizza\Rules\IngredientRules::toArray()),
             {
                 doughs: @json(array_keys($this->options["doughs"])),
                 crusts: @json(array_keys($this->options["crusts"]))
@@ -51,7 +48,7 @@ new class extends Component {
 
                 init() {
                     this.stateController = new PizzaStateController(
-                        PizzaRegistries,
+                        PizzaConfig,
                         @json($product["variants"])
                     );
 
