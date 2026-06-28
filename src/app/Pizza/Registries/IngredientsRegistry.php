@@ -3,30 +3,36 @@
 namespace App\Pizza\Registries;
 
 use App\Pizza\Models\Ingredients\Ingredient;
+use Illuminate\Container\Attributes\Singleton;
 
+#[Singleton]
 class IngredientsRegistry
 {
-    public static function list(): array
+    private array $cache = [];
+
+    public function list(): array
     {
-        return self::retrieveData()
-                |> self::transformPrices(...)
-                |> self::generateImageURLs(...);
+        return $this->cache['list'] ??= $this->generateList();
     }
 
-    public static function bySlug(): array
+    public function bySlug(): array
     {
-        return array_column(
-            self::list(),
+        return $this->cache['bySlug'] ??= array_column(
+            $this->list(),
             null,
             'slug'
         );
     }
 
-    public static function grouped(): array
+    public function grouped(): array
     {
+        if (isset($this->cache['grouped'])) {
+            return $this->cache['grouped'];
+        }
+
         $result = [];
 
-        foreach (self::bySlug() as $slug => $ingredient) {
+        foreach ($this->bySlug() as $slug => $ingredient) {
             $categorySlug = $ingredient['category']['slug'];
 
             if (! isset($result[$categorySlug])) {
@@ -44,10 +50,17 @@ class IngredientsRegistry
             $result[$categorySlug]['ingredients'][$slug] = $ingredient;
         }
 
-        return $result;
+        return $this->cache['grouped'] = $result;
     }
 
-    private static function retrieveData(): array
+    private function generateList(): array
+    {
+        return $this->retrieveData()
+                |> $this->transformPrices(...)
+                |> $this->generateImageURLs(...);
+    }
+
+    private function retrieveData(): array
     {
         return Ingredient::select([
             'id',
@@ -62,9 +75,11 @@ class IngredientsRegistry
             ])->get()->toArray();
     }
 
-    private static function transformPrices(array $ingredients): array
+    private function transformPrices(array $ingredients): array
     {
-        $sizes = OptionsRegistry::pluck('slug', 'id')['sizes'];
+        $optionsRegistry = app(OptionsRegistry::class);
+
+        $sizes = $optionsRegistry->pluck('slug', 'id')['sizes'];
 
         foreach ($ingredients as &$ingredient) {
             $prices = [];
@@ -79,7 +94,7 @@ class IngredientsRegistry
         return $ingredients;
     }
 
-    private static function generateImageURLs(array $ingredients): array
+    private function generateImageURLs(array $ingredients): array
     {
         foreach ($ingredients as &$ingredient) {
             $ingredient['image_url'] = asset($ingredient['image_path']);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Pizza\Registries\IngredientsRegistry;
 use App\Pizza\Registries\OptionsRegistry;
 use App\Pizza\Services\PizzaService;
 use Livewire\Component;
@@ -9,11 +10,17 @@ new class extends Component {
 
     private array $options;
 
-    public function mount(string $slug, PizzaService $service): void
+    private IngredientsRegistry $ingredientsRegistry;
+
+    private OptionsRegistry $optionsRegistry;
+
+    public function mount(string $slug, PizzaService $service, IngredientsRegistry $ingredientsRegistry, OptionsRegistry $optionsRegistry): void
     {
         $this->product = $service->getBySlug($slug);
 
-        $this->options = OptionsRegistry::pluck("name", "slug");
+        $this->optionsRegistry = $optionsRegistry;
+
+        $this->ingredientsRegistry = $ingredientsRegistry;
     }
 };
 ?>
@@ -22,13 +29,10 @@ new class extends Component {
     x-data='{
     init() {
         PizzaConfig.initialize({
-            ingredients: @json(App\Pizza\Registries\IngredientsRegistry::bySlug()),
-            groupedIngrediends: @json(App\Pizza\Registries\IngredientsRegistry::grouped()),
+            ingredients: @json($this->ingredientsRegistry->bySlug()),
+            groupedIngrediends: @json($this->ingredientsRegistry->grouped()),
             ingredientRules: @json(App\Pizza\Rules\IngredientRules::toArray()),
-            optionsOrder: {
-                doughs: @json(array_keys($this->options["doughs"])),
-                crusts: @json(array_keys($this->options["crusts"]))
-            },
+            optionsOrder: @json($this->optionsRegistry->only("slug")),
         });
     }
 }'>
@@ -93,18 +97,22 @@ new class extends Component {
                         </button>
                     </div>
                     <div>
+                        @php
+                            $options = $this->optionsRegistry->pluck("name", "slug");
+                            extract($options);
+                        @endphp
                         <div x-data='{ variants: @json($product["variants"]) }'>
 
                             <div class="mb-2">
                                 <div class="mb-1">Size:</div>
-                                @foreach ($this->options["sizes"] as $sizeSlug => $sizeName)
+                                @foreach ($sizes as $sizeSlug => $sizeName)
                                     <input type="radio" @disabled(!array_key_exists($sizeSlug, $product["variants"])) :checked="size === '{{ $sizeSlug }}'" value="{{ $sizeSlug }}"
                                         class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $sizeName }}" x-model="size" />
                                 @endforeach
                             </div>
                             <div class="mb-2">
                                 <div class="mb-1">Dough:</div>
-                                @foreach ($this->options["doughs"] as $doughSlug => $doughName)
+                                @foreach ($doughs as $doughSlug => $doughName)
                                     <input type="radio" x-model="dough" :checked="dough === '{{ $doughSlug }}'" value="{{ $doughSlug }}"
                                         class="btn btn-sm checked:btn-info mb-1.5" aria-label="{{ $doughName }}"
                                         :class="{ 'btn-disabled': !variants?.[size]?.['{{ $doughSlug }}'] }" />
@@ -112,7 +120,7 @@ new class extends Component {
                             </div>
                             <div class="mb-2">
                                 <div class="mb-1">Crust:</div>
-                                @foreach ($this->options["crusts"] as $crustSlug => $crustName)
+                                @foreach ($crusts as $crustSlug => $crustName)
                                     <input type="radio" x-model="crust" :checked="crust === '{{ $crustSlug }}'" value="{{ $crustSlug }}"
                                         class="btn btn-sm checked:btn-info mb-1.5"
                                         :class="{ 'btn-disabled': !variants?.[size]?.[dough]?.['{{ $crustSlug }}'] }" aria-label="{{ $crustName }}" />

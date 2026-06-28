@@ -7,14 +7,7 @@ use App\Pizza\Registries\OptionsRegistry;
 
 class PizzaService
 {
-    private array $optionSlugs;
-    private array $orderedOptions;
-
-    private function initializeRegistries(): void
-    {
-        $this->optionSlugs = OptionsRegistry::pluck('slug', 'id');
-        $this->orderedOptions = OptionsRegistry::list();
-    }
+    private ?OptionsRegistry $optionsRegistry;
 
     public function getBySlug(string $slug): array
     {
@@ -55,7 +48,7 @@ class PizzaService
 
     private function transform(array &$pizza): array
     {
-        $this->initializeRegistries();
+        $this->optionsRegistry = app(OptionsRegistry::class);
 
         $this->transformComposition($pizza);
 
@@ -81,10 +74,12 @@ class PizzaService
     {
         $variants = [];
 
+        $optionSlugs = $this->optionsRegistry->pluck('slug', 'id');
+
         foreach ($pizza['variants'] as $variant) {
-            $size = $this->optionSlugs['sizes'][$variant['option_size_id']];
-            $dough = $this->optionSlugs['doughs'][$variant['option_dough_id']];
-            $crust = $this->optionSlugs['crusts'][$variant['option_crust_id']];
+            $size = $optionSlugs['sizes'][$variant['option_size_id']];
+            $dough = $optionSlugs['doughs'][$variant['option_dough_id']];
+            $crust = $optionSlugs['crusts'][$variant['option_crust_id']];
 
             $variants[$size][$dough][$crust] = [
                 'price' => $variant['price'],
@@ -99,11 +94,13 @@ class PizzaService
     {
         $variants = $pizza['variants'];
 
-        $size = $this->firstAvailableOption($this->orderedOptions['sizes'], $variants);
+        $orderedOptions = $this->optionsRegistry->list();
 
-        $dough = $this->firstAvailableOption($this->orderedOptions['doughs'], $variants[$size]);
+        $size = $this->firstAvailableOption($orderedOptions['sizes'], $variants);
 
-        $crust = $this->firstAvailableOption($this->orderedOptions['crusts'], $variants[$size][$dough]);
+        $dough = $this->firstAvailableOption($orderedOptions['doughs'], $variants[$size]);
+
+        $crust = $this->firstAvailableOption($orderedOptions['crusts'], $variants[$size][$dough]);
 
         $pizza['defaults'] = [
             'size' => $size,
