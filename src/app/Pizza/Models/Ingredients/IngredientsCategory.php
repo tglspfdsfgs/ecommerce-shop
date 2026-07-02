@@ -12,4 +12,14 @@ class IngredientsCategory extends Model
     protected $fillable = ['name', 'slug', 'exclusive', 'max_per_ingredient'];
 
     protected $casts = ['exclusive' => 'boolean'];
+
+    public function ingredients()
+    {
+        return $this->hasMany(Ingredient::class, 'category_id');
+    }
+
+    public function prices()
+    {
+        return $this->hasMany(IngredientCategoryPrices::class, 'category_id');
+    }
 }

@@ -113,7 +113,7 @@ class PizzaSeeder extends Seeder
             ],
         ];
 
-        $this->optionIDs = OptionsRegistry::pluck('id', 'name');
+        $this->optionIDs = app(OptionsRegistry::class)->pluck('id', 'name');
 
         foreach ($variants as $sizeName => $doughsData) {
             foreach ($doughsData as $doughName => $crustsData) {

@@ -2,105 +2,88 @@
 
 namespace App\Pizza\Registries;
 
-use App\Pizza\Models\Ingredients\Ingredient;
+use App\Pizza\Models\Ingredients\IngredientsCategory;
 use Illuminate\Container\Attributes\Singleton;
 
 #[Singleton]
 class IngredientsRegistry
 {
-    private array $cache = [];
+    public function grouped(): array
+    {
+        return $this->retrieveData()
+            |> $this->slugifyKeys(...)
+            |> $this->transformIngredients(...)
+            |> $this->transformPrices(...);
+    }
 
     public function list(): array
     {
-        return $this->cache['list'] ??= $this->generateList();
-    }
-
-    public function bySlug(): array
-    {
-        return $this->cache['bySlug'] ??= array_column(
-            $this->list(),
-            null,
-            'slug'
-        );
-    }
-
-    public function grouped(): array
-    {
-        if (isset($this->cache['grouped'])) {
-            return $this->cache['grouped'];
-        }
-
         $result = [];
 
-        foreach ($this->bySlug() as $slug => $ingredient) {
-            $categorySlug = $ingredient['category']['slug'];
+        foreach ($this->grouped() as $categoryData) {
+            $ingredients = $categoryData['ingredients'];
 
-            if (! isset($result[$categorySlug])) {
-                $result[$categorySlug] = [
-                    'id' => $ingredient['category']['id'],
-                    'name' => $ingredient['category']['name'],
-                    'slug' => $categorySlug,
-                    'exclusive' => $ingredient['category']['exclusive'],
-                    'max_per_ingredient' => $ingredient['category']['max_per_ingredient'],
-                    'ingredients' => [],
-                ];
+            unset($categoryData['ingredients']);
+            unset($categoryData['prices']);
+
+            foreach ($ingredients as $ingredientSlug => $ingredientData) {
+                $ingredientData['category'] = $categoryData;
+                $result[$ingredientSlug] = $ingredientData;
             }
-            unset($ingredient['category']);
-
-            $result[$categorySlug]['ingredients'][$slug] = $ingredient;
         }
 
-        return $this->cache['grouped'] = $result;
+        return $result;
     }
 
-    private function generateList(): array
+    private function retrieveData()
     {
-        return $this->retrieveData()
-                |> $this->transformPrices(...)
-                |> $this->generateImageURLs(...);
-    }
-
-    private function retrieveData(): array
-    {
-        return Ingredient::select([
-            'id',
-            'name',
-            'slug',
-            'image_path',
-            'category_id',
-        ])
+        return IngredientsCategory::select(['id', 'name', 'slug', 'max_per_ingredient', 'exclusive'])
             ->with([
-                'category:id,name,slug,exclusive,max_per_ingredient',
-                'prices:ingredient_id,option_size_id,price',
-            ])->get()->toArray();
+                'ingredients:category_id,id,name,slug,image_path',
+                'prices:category_id,id,size_id,price',
+            ])
+            ->get()->toArray();
     }
 
-    private function transformPrices(array $ingredients): array
+    private function transformIngredients(array $list): array
     {
-        $optionsRegistry = app(OptionsRegistry::class);
+        foreach ($list as $categorySlug => $categoryData) {
+            $list[$categorySlug]['ingredients'] = $this->slugifyKeys($categoryData['ingredients']);
 
-        $sizes = $optionsRegistry->pluck('slug', 'id')['sizes'];
+            foreach ($list[$categorySlug]['ingredients'] as $ingredientSlug => $ingredientData) {
+                $ingredientData['image_url'] = asset($ingredientData['image_path']);
+                unset($ingredientData['image_path']);
 
-        foreach ($ingredients as &$ingredient) {
-            $prices = [];
+                unset($ingredientData['category_id']);
 
-            foreach ($ingredient['prices'] as $price) {
-                $prices[$sizes[$price['option_size_id']]] = $price['price'];
+                $list[$categorySlug]['ingredients'][$ingredientSlug] = $ingredientData;
+            }
+        }
+
+        return $list;
+    }
+
+    private function transformPrices(array $list): array
+    {
+        $sizes = app(OptionsRegistry::class)->pluck('slug', 'id')['sizes'];
+
+        foreach ($list as $categorySlug => $categoryData) {
+            $transformedPrices = [];
+
+            foreach ($categoryData['prices'] as $priceData) {
+                $sizeSlug = $sizes[$priceData['size_id']];
+
+                $transformedPrices[$sizeSlug] = $priceData['price'];
             }
 
-            $ingredient['prices'] = $prices;
+            $list[$categorySlug]['prices'] = $transformedPrices;
         }
 
-        return $ingredients;
+        return $list;
     }
 
-    private function generateImageURLs(array $ingredients): array
+    private function slugifyKeys(array $list): array
     {
-        foreach ($ingredients as &$ingredient) {
-            $ingredient['image_url'] = asset($ingredient['image_path']);
-            unset($ingredient['image_path']);
-        }
-
-        return $ingredients;
+        return array_column($list, null, 'slug');
     }
 }

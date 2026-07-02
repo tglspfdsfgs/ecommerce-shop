@@ -3,8 +3,8 @@
 namespace Database\Seeders\PizzaSeeders;
 
 use App\Pizza\Models\Ingredients\Ingredient;
+use App\Pizza\Models\Ingredients\IngredientCategoryPrices;
 use App\Pizza\Models\Ingredients\IngredientsCategory;
-use App\Pizza\Models\Ingredients\IngredientsPrice;
 use App\Pizza\Models\Options\OptionSize;
 use Illuminate\Database\Seeder;
 
@@ -56,13 +56,12 @@ class IngredientsSeeder extends Seeder
         ],
     ];
     private array $categoryIds = [];
-    private array $ingredientIds = [];
 
     public function run(): void
     {
         $this->seedCategories();
         $this->seedIngredients();
-        $this->seedPrices();
+        $this->seedCategoryPrices();
     }
 
     private function seedCategories(): void
@@ -89,27 +88,26 @@ class IngredientsSeeder extends Seeder
     {
         foreach ($this->configuration as $category => $ingredients) {
             foreach ($ingredients as $ingredient => $imagePath) {
-                $model = Ingredient::create([
+                Ingredient::create([
                     'name' => $ingredient,
                     'category_id' => $this->categoryIds[$category],
                     'image_path' => $imagePath,
                 ]);
-                $this->ingredientIds[$ingredient] = $model->id;
             }
         }
     }
 
-    private function seedPrices(): void
+    private function seedCategoryPrices(): void
     {
         $sizes = OptionSize::orderBy('sort_order')->get();
 
-        foreach ($this->ingredientIds as $ingredientId) {
+        foreach ($this->categoryIds as $categoryId) {
             $price = 29;
 
             foreach ($sizes as $size) {
-                IngredientsPrice::create([
-                    'ingredient_id' => $ingredientId,
-                    'option_size_id' => $size->id,
+                IngredientCategoryPrices::create([
+                    'category_id' => $categoryId,
+                    'size_id' => $size->id,
                     'price' => $price,
                 ]);
                 $price += 10;

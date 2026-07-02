@@ -29,7 +29,7 @@ new class extends Component {
     x-data='{
     init() {
         PizzaConfig.initialize({
-            ingredients: @json($this->ingredientsRegistry->bySlug()),
+            ingredients: @json($this->ingredientsRegistry->list()),
             groupedIngrediends: @json($this->ingredientsRegistry->grouped()),
             ingredientRules: @json(App\Pizza\Rules\IngredientRules::toArray()),
             optionsOrder: @json($this->optionsRegistry->only("slug")),
@@ -53,23 +53,28 @@ new class extends Component {
                 init() {
                     this.stateController = new PizzaStateController(
                         PizzaConfig,
-                        @json($product["variants"])
+                        @json($product["variants"]),
+                        @json($product["composition"])
                     );
 
                     with (this) {
-                        price  = stateController.countPrice(size, dough, crust);
+                        price  = stateController.countPrice(size, dough, crust, composition);
 
                         $watch(`size`, (newSize) => {
 
-                            ({ dough, crust, price, weight } = stateController.sizeChanged(newSize));
+                            ({ dough, crust, price, weight } = stateController.sizeChanged(newSize, composition));
                         });
                         $watch(`dough`, (newDough) => {
 
-                            ({ crust, price, weight } = stateController.doughChanged(size, newDough));
+                            ({ crust, price, weight } = stateController.doughChanged(size, newDough, composition));
                         });
                         $watch(`crust`, (newCrust) => {
 
-                            ({ price, weight } = stateController.crustChanged(size, dough, newCrust));
+                            ({ price, weight } = stateController.crustChanged(size, dough, newCrust, composition));
+                        });
+                        $watch(`composition`, (newComposition) => {
+
+                            price  = stateController.countPrice(size, dough, crust, newComposition);
                         });
                     }
                 }
