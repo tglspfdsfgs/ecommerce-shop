@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Livewire } from "../../vendor/livewire/livewire/dist/livewire.esm";
-import { PizzaStateController, PizzaConfig } from "./tools.js";
+import { PizzaConfig } from "./tools/pizza/tools.js";
+import PizzaStateController from "./tools/pizza/pizzaStateController.js";
 
 window.axios = axios;
 
