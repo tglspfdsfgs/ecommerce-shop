@@ -135,6 +135,8 @@ new class extends Component {
                         <x-blocks.ingredient-bars.current-ingredients x-model="composition" />
 
                         <x-blocks.ingredient-bars.add-ingredient x-model="composition" />
+
+                        <x-blocks.ingredient-bars.replace-ingredient-modal x-model="composition" />
                     </div>
                 </div>
             </div>

@@ -87,10 +87,17 @@
                 ❮
             </button>
             <template x-for="(quantity, slug) in compositionState" :key="slug">
-                <div class="ingredient px-0.5">
+                <div class="ingredient select-none snap-start px-0.5">
                     <div
                         class="w-35 h-35 relative flex flex-col items-center justify-normal gap-0.5 overflow-hidden rounded-sm border-2 border-stone-300 bg-white">
-                        <div class="h-15 w-15 mt-1.5 flex items-center">
+                        <div class="h-15 w-15 mt-1.5 flex cursor-pointer items-center"
+                            @click="$dispatch('open-replacement-modal', {
+                                    categorySlug: ingredients[slug].category.slug,
+                                    replacement: {
+                                        ingredientSlug: slug,
+                                        quantity: quantity
+                                    }
+                             })">
                             <img class="w-full align-middle" :src="ingredients[slug].image_url">
                         </div>
                         <span class="mx-1 text-center text-sm" x-text="ingredients[slug].name"></span>

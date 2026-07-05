@@ -80,7 +80,7 @@
                 </button>
                 <template x-for="ingredient in category.ingredients" :key="ingredient.slug">
                     <template x-if="!compositionState[ingredient.slug]">
-                        <div @click="addToComposition(ingredient.slug, category)" class="ingredient cursor-pointer snap-start px-0.5"
+                        <div @click="addToComposition(ingredient.slug, category)" class="ingredient cursor-pointer select-none snap-start px-0.5"
                             :class="{ 'opacity-50 pointer-events-none': !canAdd(ingredient.slug, category) }">
                             <div
                                 class="w-35 h-35 relative flex flex-col items-center justify-normal gap-0.5 overflow-hidden rounded-sm border-2 border-stone-300 bg-white">
