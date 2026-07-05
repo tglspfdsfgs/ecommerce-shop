@@ -8,6 +8,8 @@ use Illuminate\Container\Attributes\Singleton;
 #[Singleton]
 class IngredientsRegistry
 {
+    private array $cache = [];
+
     public function grouped(): array
     {
         return $this->retrieveData()
@@ -37,7 +39,7 @@ class IngredientsRegistry
 
     private function retrieveData()
     {
-        return IngredientsCategory::select(['id', 'name', 'slug', 'max_per_ingredient', 'exclusive'])
+        return $this->cache['retrieveData'] ??= IngredientsCategory::select(['id', 'name', 'slug', 'max_per_ingredient', 'exclusive'])
             ->with([
                 'ingredients:category_id,id,name,slug,image_path',
                 'prices:category_id,id,size_id,price',

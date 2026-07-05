@@ -8,8 +8,6 @@ use Livewire\Component;
 new class extends Component {
     public array $product;
 
-    private array $options;
-
     private IngredientsRegistry $ingredientsRegistry;
 
     private OptionsRegistry $optionsRegistry;
@@ -91,7 +89,7 @@ new class extends Component {
                     </div>
 
                 </span>
-                <div class="shrink overflow-x-hidden">
+                <div class="shrink" x-on:alpine:initialized.window="$el.classList.add('overflow-x-hidden')">
                     <h2 class="mb-2 text-xl font-bold">{{ $product["title"] }}</h2>
                     <div class="mb-4">
                         <span class="mr-2 text-lg font-bold"><span x-text="price + ` uah`">{{ $product["defaults"]["price"] }} uah</span></span>
