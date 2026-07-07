@@ -29,6 +29,32 @@ class PizzaService
         );
     }
 
+    public function showcases(): array
+    {
+        $pizzas = $this->getAll();
+
+        $result = [];
+
+        foreach ($pizzas as $pizza) {
+            $category = $pizza['category'];
+
+            $slug = $category['slug'];
+
+            if (! isset($result[$slug])) {
+                $result[$slug] = [
+                    'id' => $category['id'],
+                    'title' => $category['title'],
+                    'description' => $category['description'],
+                    'products' => [],
+                ];
+            }
+
+            $result[$slug]['products'][] = $pizza;
+        }
+
+        return $result;
+    }
+
     private function baseQuery()
     {
         return Pizza::select([
@@ -39,9 +65,11 @@ class PizzaService
             'page_image_path',
             'thumbnail_image_path',
             'labels',
+            'pizza_category_id',
         ])
             ->with([
-                'composition:slug',
+                'category:id,title,description,slug',
+                'composition:id,slug',
                 'variants:pizza_id,option_size_id,option_dough_id,option_crust_id,price,weight',
             ]);
     }

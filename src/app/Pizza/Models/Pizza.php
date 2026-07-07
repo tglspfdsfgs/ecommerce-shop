@@ -12,7 +12,7 @@ class Pizza extends Model
 {
     use Sluggable;
 
-    protected $fillable = ['slug', 'card_image_path', 'page_image_path', 'thumbnail_image_path', 'labels'];
+    protected $fillable = ['slug', 'card_image_path', 'page_image_path', 'thumbnail_image_path', 'labels', 'pizza_category_id'];
 
     protected $casts = [
         'labels' => 'array',
@@ -27,6 +27,11 @@ class Pizza extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(PizzaVariant::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(PizzaCategory::class, 'pizza_category_id');
     }
 
     public function getRouteKeyName(): string

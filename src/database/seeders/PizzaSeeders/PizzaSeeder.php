@@ -3,6 +3,7 @@
 namespace Database\Seeders\PizzaSeeders;
 
 use App\Pizza\Models\Pizza;
+use App\Pizza\Models\PizzaCategory;
 use App\Pizza\Models\PizzaVariant;
 use App\Pizza\Registries\OptionsRegistry;
 use Illuminate\Database\Seeder;
@@ -13,12 +14,17 @@ class PizzaSeeder extends Seeder
 
     public function run(): void
     {
+        PizzaCategory::create([
+            'title' => 'Bestsellers and novelties',
+        ]);
+
         $pizza = Pizza::create([
             'card_image_path' => 'storage/card/pepperony-y-tomaty.png',
             'page_image_path' => 'storage/product/pepperony-y-tomaty.png',
             'thumbnail_image_path' => 'storage/thumbnail/pepperony-y-tomaty.png',
             'title' => 'Pizza Pepperoni with tomatoes',
             'labels' => ['spicy', 'cheesy', 'vegetarian'],
+            'pizza_category_id' => 1,
         ]);
 
         $pizza->composition()->attach([

@@ -1,5 +1,6 @@
 <?php
 
+use App\Pizza\Services\PizzaService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -8,10 +9,12 @@ new class extends Component {
 
     public array $filterSchemes = [];
 
-    public function mount(): void
+    public function mount(PizzaService $service): void
     {
         $this->filterSchemes = include resource_path("views/pages/shop/mock/filterSchemes.php");
         $this->showcases = include resource_path("views/pages/shop/mock/showcases.php");
+
+        dd($service->showcases());
     }
 
     #[On("filters-updated")]

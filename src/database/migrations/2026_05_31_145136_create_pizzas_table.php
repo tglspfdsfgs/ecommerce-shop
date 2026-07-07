@@ -22,6 +22,12 @@ return new class extends Migration {
 
             $table->json('labels')->nullable();
 
+            $table->foreignId('pizza_category_id')
+                ->nullable()
+                ->references('id')
+                ->on('pizza_categories')
+                ->nullOnDelete();
+
             $table->timestamps();
         });
     }
