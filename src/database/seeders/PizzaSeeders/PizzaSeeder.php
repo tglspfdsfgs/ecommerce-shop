@@ -6,99 +6,15 @@ use App\Pizza\Models\Ingredients\IngredientsCategory;
 use App\Pizza\Models\Pizza;
 use App\Pizza\Models\PizzaCategory;
 use App\Pizza\Models\PizzaVariant;
-use App\Pizza\Registries\OptionsRegistry;
+use App\Pizza\Services\VariantsService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 
 class PizzaSeeder extends Seeder
 {
-    private array $optionIDs;
     private Collection $ingredientsCategories;
 
-    private array $variantsExample = [
-        'Standard size' => [
-            'Dough Thick' => [
-                'Without bort' => [
-                    'price' => 281,
-                    'weight' => 539,
-                ],
-            ],
-            'Dough Thin' => [
-                'Without bort' => [
-                    'price' => 281,
-                    'weight' => 380,
-                ],
-                'Cheesy' => [
-                    'price' => 330,
-                    'weight' => 512,
-                ],
-                'Hot-Dog' => [
-                    'price' => 368,
-                    'weight' => 588,
-                ],
-            ],
-        ],
-        'Large' => [
-            'Dough Thick' => [
-                'Without bort' => [
-                    'price' => 341,
-                    'weight' => 755,
-                ],
-            ],
-            'Dough Thin' => [
-                'Without bort' => [
-                    'price' => 341,
-                    'weight' => 524,
-                ],
-                'Cheesy' => [
-                    'price' => 389,
-                    'weight' => 728,
-                ],
-                'Hot-Dog' => [
-                    'price' => 419,
-                    'weight' => 794,
-                ],
-            ],
-        ],
-        'ExtraLarge' => [
-            'Dough Thick' => [
-                'Without bort' => [
-                    'price' => 395,
-                    'weight' => 846,
-                ],
-            ],
-            'Dough Thin' => [
-                'Without bort' => [
-                    'price' => 395,
-                    'weight' => 597,
-                ],
-                'Cheesy' => [
-                    'price' => 460,
-                    'weight' => 836,
-                ],
-                'Hot-Dog' => [
-                    'price' => 486,
-                    'weight' => 912,
-                ],
-            ],
-        ],
-        'XXLarge' => [
-            'Dough Thin' => [
-                'Without bort' => [
-                    'price' => 461,
-                    'weight' => 922,
-                ],
-                'Cheesy' => [
-                    'price' => 541,
-                    'weight' => 1033,
-                ],
-                'Hot-Dog' => [
-                    'price' => 566,
-                    'weight' => 1098,
-                ],
-            ],
-        ],
-    ];
+    private array $variants;
 
     public function run(): void
     {
@@ -107,7 +23,7 @@ class PizzaSeeder extends Seeder
         $this->seedPizzas();
     }
 
-    private function seedCategories()
+    private function seedCategories(): void
     {
         $categories = [
             ['title' => 'Bestsellers and novelties', 'description' => 'Novelties worth tasting'],
@@ -124,53 +40,35 @@ class PizzaSeeder extends Seeder
         }
     }
 
-    private function seedPizzas()
+    private function seedPizzas(): void
     {
         $this->ingredientsCategories = IngredientsCategory::with('ingredients:id,category_id')->get(['id', 'exclusive', 'max_per_ingredient']);
 
-        $this->optionIDs = app(OptionsRegistry::class)->pluck('id', 'name');
-
-        $counter = 1;
+        $this->variants = VariantsService::getMatrix('id');
 
         foreach (PizzaCategory::all() as $category) {
-            $pizzasInCategory = 15;
+            $pizzasInCategory = 6;
 
             for ($i = 1; $i <= $pizzasInCategory; ++$i) {
-                $this->createPizza("Pizza #{$counter}", $category->id);
-                ++$counter;
+                $this->createPizza($category->id);
             }
         }
     }
 
-    private function createPizza(string $title, int $categoryID): void
+    private function createPizza(int $categoryID): void
     {
         $pizza = Pizza::create([
+            'title' => 'Pizza '.ucwords(implode(' ', fake()->words(random_int(1, 3)))),
             'card_image_path' => 'storage/card/pepperony-y-tomaty.png',
             'page_image_path' => 'storage/product/pepperony-y-tomaty.png',
             'thumbnail_image_path' => 'storage/thumbnail/pepperony-y-tomaty.png',
-            'title' => $title,
             'labels' => ['spicy', 'cheesy', 'vegetarian'],
             'pizza_category_id' => $categoryID,
         ]);
 
         $pizza->composition()->attach($this->randomComposition());
 
-        foreach ($this->variantsExample as $sizeName => $doughsData) {
-            foreach ($doughsData as $doughName => $crustsData) {
-                foreach ($crustsData as $crustName => $payload) {
-                    PizzaVariant::create([
-                        'pizza_id' => $pizza->id,
-
-                        'option_size_id' => $this->optionIDs['sizes'][$sizeName],
-                        'option_dough_id' => $this->optionIDs['doughs'][$doughName],
-                        'option_crust_id' => $this->optionIDs['crusts'][$crustName],
-
-                        'price' => $payload['price'],
-                        'weight' => $payload['weight'],
-                    ]);
-                }
-            }
-        }
+        $this->seedRandomVariants($pizza->id);
     }
 
     private function randomComposition(): array
@@ -190,5 +88,39 @@ class PizzaSeeder extends Seeder
         }
 
         return $result;
+    }
+
+    private function seedRandomVariants(int $pizzaId): void
+    {
+        $baseSizePrice = random_int(330, 370);
+        $baseSizeWeight = random_int(330, 430);
+
+        foreach ($this->variants as $sizeID => $doughsList) {
+            $sizePrice = $baseSizePrice;
+            $sizeWeight = $baseSizeWeight;
+
+            foreach ($doughsList as $doughID => $crustsList) {
+                $crustPrice = $sizePrice;
+
+                foreach ($crustsList as $crustID) {
+                    PizzaVariant::create([
+                        'pizza_id' => $pizzaId,
+
+                        'option_size_id' => $sizeID,
+                        'option_dough_id' => $doughID,
+                        'option_crust_id' => $crustID,
+
+                        'price' => round($crustPrice),
+                        'weight' => round($sizeWeight),
+                    ]);
+
+                    $crustPrice *= 1.17;
+                    $sizeWeight *= 1.2;
+                }
+            }
+
+            $baseSizePrice *= 1.17;
+            $baseSizeWeight *= 1.25;
+        }
     }
 }

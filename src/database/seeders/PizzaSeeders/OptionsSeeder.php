@@ -17,6 +17,7 @@ class OptionsSeeder extends Seeder
         $this->seedSizes();
         $this->seedDoughs();
         $this->seedCrusts();
+        $this->seedRestrictions();
     }
 
     private function seedSizes(): void
@@ -56,5 +57,16 @@ class OptionsSeeder extends Seeder
         foreach ($crusts as $crust) {
             OptionCrust::create(['name' => $crust]);
         }
+    }
+
+    private function seedRestrictions(): void
+    {
+        $doughThick = OptionDough::whereName('Dough Thick')->firstOrFail();
+
+        OptionSize::whereName('XXLarge')->firstOrFail()->restrict($doughThick);
+
+        $doughThick->restrict(OptionCrust::whereName('Cheesy')->firstOrFail());
+
+        $doughThick->restrict(OptionCrust::whereName('Hot-Dog')->firstOrFail());
     }
 }

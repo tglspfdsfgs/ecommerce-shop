@@ -2,11 +2,12 @@
 
 namespace App\Pizza\Models\Options;
 
-use App\Shared\Models\Sluggable;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class OptionCrust extends Model
+class OptionCrust extends Option
 {
-    use BaseOption;
-    use Sluggable;
+    public function restrictions(): MorphMany
+    {
+        throw new \BadMethodCallException('Crusts have no dependent options to restrict.');
+    }
 }

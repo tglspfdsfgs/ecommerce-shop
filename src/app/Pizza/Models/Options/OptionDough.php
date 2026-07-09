@@ -2,11 +2,6 @@
 
 namespace App\Pizza\Models\Options;
 
-use App\Shared\Models\Sluggable;
-use Illuminate\Database\Eloquent\Model;
-
-class OptionDough extends Model
+class OptionDough extends Option
 {
-    use BaseOption;
-    use Sluggable;
 }

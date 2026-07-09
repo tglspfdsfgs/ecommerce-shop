@@ -2,24 +2,22 @@
 
 namespace Database\Seeders;
 
-use App\Shared\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\PizzaSeeders\IngredientsSeeder;
+use Database\Seeders\PizzaSeeders\OptionsSeeder;
+use Database\Seeders\PizzaSeeders\PizzaSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            OptionsSeeder::class,
+            IngredientsSeeder::class,
+            PizzaSeeder::class,
         ]);
     }
 }
