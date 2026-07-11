@@ -7,6 +7,8 @@ use App\Pizza\Registries\OptionsRegistry;
 
 class PizzaService
 {
+    public const string PRODUCT_TYPE = 'pizza';
+
     private ?OptionsRegistry $optionsRegistry;
 
     public function getBySlug(string $slug): array
@@ -44,6 +46,7 @@ class PizzaService
                 $result[$slug] = [
                     'id' => $category['id'],
                     'title' => $category['title'],
+                    'slug' => $category['slug'],
                     'description' => $category['description'],
                     'products' => [],
                 ];

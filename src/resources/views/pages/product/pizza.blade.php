@@ -1,41 +1,22 @@
 <?php
 
-use App\Pizza\Registries\IngredientsRegistry;
-use App\Pizza\Registries\OptionsRegistry;
 use App\Pizza\Services\PizzaService;
 use Livewire\Component;
 
 new class extends Component {
     public array $product;
 
-    private IngredientsRegistry $ingredientsRegistry;
-
-    private OptionsRegistry $optionsRegistry;
-
-    public function mount(string $slug, PizzaService $service, IngredientsRegistry $ingredientsRegistry, OptionsRegistry $optionsRegistry): void
+    public function mount(string $slug, PizzaService $service): void
     {
         $this->product = $service->getBySlug($slug);
-
-        $this->optionsRegistry = $optionsRegistry;
-
-        $this->ingredientsRegistry = $ingredientsRegistry;
     }
 };
 ?>
 
-<div
-    x-data='{
-    init() {
-        PizzaConfig.initialize({
-            ingredients: @json($this->ingredientsRegistry->list()),
-            groupedIngrediends: @json($this->ingredientsRegistry->grouped()),
-            ingredientRules: @json(App\Pizza\Rules\IngredientRules::toArray()),
-            optionsOrder: @json($this->optionsRegistry->only("slug")),
-        });
-    }
-}'>
+<div>
     <livewire:layout.header />
     <livewire:layout.main>
+        <x-blocks.initialize-pizza-config />
         <div x-data='{
                 size: @json($product["defaults"]["size"]),
                 dough: @json($product["defaults"]["dough"]),
@@ -101,7 +82,7 @@ new class extends Component {
                     </div>
                     <div>
                         @php
-                            $options = $this->optionsRegistry->pluck("name", "slug");
+                            $options = app(App\Pizza\Registries\OptionsRegistry::class)->pluck("name", "slug");
                             extract($options);
                         @endphp
                         <div x-data='{ variants: @json($product["variants"]) }'>

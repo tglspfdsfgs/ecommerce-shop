@@ -9,12 +9,18 @@ new class extends Component {
 
     public array $filterSchemes = [];
 
+    private PizzaService $service;
+
     public function mount(PizzaService $service): void
     {
         $this->filterSchemes = include resource_path("views/pages/shop/mock/filterSchemes.php");
-        $this->showcases = include resource_path("views/pages/shop/mock/showcases.php");
 
-        dd($service->showcases());
+        $this->showcases = [
+            "list" => $service->showcases(),
+            "productType" => $service::PRODUCT_TYPE,
+        ];
+
+        // dd($this->showcases);
     }
 
     #[On("filters-updated")]
@@ -32,8 +38,11 @@ new class extends Component {
             <livewire:blocks.filter.filter-bar :filter-schemes="$filterSchemes" include-reset-btns />
         </div>
 
-        @foreach ($this->showcases as $data)
-            <livewire:blocks.showcase :data="$data" />
+        <x-blocks.initialize-pizza-config />
+
+        @foreach ($showcases["list"] as $showcase)
+            {{-- prettier-ignore --}}
+            <livewire:blocks.showcase :data="$showcase" :productType="$showcases['productType']" :key="$showcase['id']" />
         @endforeach
     </livewire:layout.main>
     <livewire:layout.footer />

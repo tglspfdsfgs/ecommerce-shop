@@ -3,10 +3,18 @@
 use Livewire\Component;
 
 new class extends Component {
-    public bool $onHomePage = false;
+    public readonly bool $onHomePage;
     public array $data;
+    public readonly string $cardComponent;
 
-    public function productCardView(string $productType): string
+    public function mount(array $data, string $productType, bool $onHomePage = false): void
+    {
+        $this->data = $data;
+        $this->onHomePage = $onHomePage;
+        $this->cardComponent = $this->cardComponent($productType);
+    }
+
+    public function cardComponent(string $productType): string
     {
         return match ($productType) {
             "pizza" => "blocks.card.pizza",
@@ -54,7 +62,8 @@ window.addEventListener('resize', () => { checkSlider(); });" class="mb-5">
                     left: -$refs.slider.querySelector('.product-item').offsetWidth,
                     behavior: 'smooth'
                 })"
-            x-cloak x-show="!showedMore && canScroll"class="btn btn-circle btn-outline btn-info btn-lg md:btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2">
+            x-cloak x-show="!showedMore && canScroll"
+            class="btn btn-circle btn-outline btn-info btn-lg md:btn-sm absolute left-0 top-1/2 z-10 -translate-y-1/2">
             ❮
         </button>
         <button
@@ -71,7 +80,8 @@ window.addEventListener('resize', () => { checkSlider(); });" class="mb-5">
         <div x-ref="slider" x-bind:class="showedMore ? 'flex flex-wrap' : 'flex flex-nowrap overflow-x-auto no-scrollbar'">
             @foreach ($data["products"] as $product)
                 <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
-                    <livewire:is :component='$this->productCardView($product["productType"])' :data="$product" />
+                    {{-- prettier-ignore --}}
+                    <livewire:is :component="$cardComponent" :product="$product" :key="$product['id']" />
                 </div>
             @endforeach
         </div>
