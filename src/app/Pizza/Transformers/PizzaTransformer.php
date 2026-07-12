@@ -1,86 +1,18 @@
 <?php
 
-namespace App\Pizza\Services;
+namespace App\Pizza\Transformers;
 
-use App\Pizza\Models\Pizza;
 use App\Pizza\Registries\OptionsRegistry;
 
-class PizzaService
+readonly class PizzaTransformer
 {
-    public const string PRODUCT_TYPE = 'pizza';
-
-    private ?OptionsRegistry $optionsRegistry;
-
-    public function getBySlug(string $slug): array
-    {
-        $pizza = $this->baseQuery()
-            ->where('slug', $slug)
-            ->firstOrFail()
-            ->toArray();
-
-        return $this->transform($pizza);
+    public function __construct(
+        private OptionsRegistry $optionsRegistry,
+    ) {
     }
 
-    public function getAll(): array
+    public function transform(array $pizza): array
     {
-        $pizzas = $this->baseQuery()->get()->toArray();
-
-        return array_map(
-            fn ($pizza) => $this->transform($pizza),
-            $pizzas
-        );
-    }
-
-    public function showcases(): array
-    {
-        $pizzas = $this->getAll();
-
-        $result = [];
-
-        foreach ($pizzas as $pizza) {
-            $category = $pizza['category'];
-
-            $slug = $category['slug'];
-
-            if (! isset($result[$slug])) {
-                $result[$slug] = [
-                    'id' => $category['id'],
-                    'title' => $category['title'],
-                    'slug' => $category['slug'],
-                    'description' => $category['description'],
-                    'products' => [],
-                ];
-            }
-
-            $result[$slug]['products'][] = $pizza;
-        }
-
-        return $result;
-    }
-
-    private function baseQuery()
-    {
-        return Pizza::select([
-            'id',
-            'title',
-            'slug',
-            'card_image_path',
-            'page_image_path',
-            'thumbnail_image_path',
-            'labels',
-            'pizza_category_id',
-        ])
-            ->with([
-                'category:id,title,description,slug',
-                'composition:id,slug',
-                'variants:pizza_id,option_size_id,option_dough_id,option_crust_id,price,weight',
-            ]);
-    }
-
-    private function transform(array &$pizza): array
-    {
-        $this->optionsRegistry = app(OptionsRegistry::class);
-
         $this->transformComposition($pizza);
 
         $this->transformVariants($pizza);

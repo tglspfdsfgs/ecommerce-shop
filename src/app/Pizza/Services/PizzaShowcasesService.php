@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Pizza\Services;
+
+use App\Pizza\Models\PizzaCategory;
+use App\Pizza\Transformers\PizzaTransformer;
+
+class PizzaShowcasesService
+{
+    public const string PRODUCT_TYPE = 'pizza';
+
+    public function get(array $filters = []): array
+    {
+        $catalog = $this->catalog();
+
+        // return $this->applyFilters($catalog, $filters);
+
+        return $catalog;
+    }
+
+    private function catalog(): array
+    {
+        /* TODO: add cache
+         * return Cache::remember(
+         *      'pizza.catalog',
+         *          now()->addHour(),
+         *          fn () => $this->buildCatalog()
+         * );
+         */
+
+        return $this->buildCatalog();
+    }
+
+    private function buildCatalog(): array
+    {
+        $categories = $this->baseQuery()->get()->toArray();
+
+        $transformer = app(PizzaTransformer::class);
+
+        foreach ($categories as &$category) {
+            $category['products'] = array_map(
+                fn ($pizza) => $transformer->transform($pizza),
+                $category['products']
+            );
+        }
+
+        return $categories;
+    }
+
+    private function baseQuery()
+    {
+        return PizzaCategory::select([
+            'id',
+            'title',
+            'description',
+            'slug',
+        ])
+            ->with([
+                'products' => function ($query) {
+                    $query->select([
+                        'id',
+                        'title',
+                        'slug',
+                        'card_image_path',
+                        'page_image_path',
+                        'thumbnail_image_path',
+                        'labels',
+                        'pizza_category_id',
+                    ])
+                        ->with([
+                            'composition:id,slug',
+                            'variants:pizza_id,option_size_id,option_dough_id,option_crust_id,price,weight',
+                        ]);
+                },
+            ]);
+    }
+}

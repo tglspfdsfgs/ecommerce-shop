@@ -82,4 +82,5 @@ new class extends Component {
             </template>
         </div>
     @endif
+    <div x-text="JSON.stringify(filters)"></div>
 </div>

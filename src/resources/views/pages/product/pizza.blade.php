@@ -1,12 +1,12 @@
 <?php
 
-use App\Pizza\Services\PizzaService;
+use App\Pizza\Services\PizzaProductService;
 use Livewire\Component;
 
 new class extends Component {
     public array $product;
 
-    public function mount(string $slug, PizzaService $service): void
+    public function mount(string $slug, PizzaProductService $service): void
     {
         $this->product = $service->getBySlug($slug);
     }
