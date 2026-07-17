@@ -1,18 +1,21 @@
-@props(["name", "label", "values"])
+@props(["label", "values"])
 
 <div x-data='{
             open: false,
             selected: undefined,
 
             toggle(value) {
-                let temp = Array.isArray(this.selected) ? this.selected : [];
+                let temp = Array.isArray(this.selected)
+                    ? [...this.selected]
+                    : [];
 
                 if (temp.includes(value)) {
                     temp = temp.filter(v => v !== value);
                 } else {
-                    temp = [...temp, value];
+                    temp.push(value);
                 }
-                this.selected = temp.length === 0 ? undefined : temp;
+
+                this.selected = temp.length ? temp : undefined;
             }
         }'
     {{ $attributes->only(["x-model"]) }} x-modelable="selected" @click.outside="open = false" class="dropdown" :class="open ? `dropdown-open` : `dropdown-close`">

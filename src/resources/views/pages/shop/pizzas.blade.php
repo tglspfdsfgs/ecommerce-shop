@@ -7,11 +7,11 @@ use Livewire\Component;
 new class extends Component {
     public array $showcases = [];
 
-    public array $filterSchemes = [];
+    public array $filterSchemes;
 
     public function mount(PizzaShowcasesService $showcasesService): void
     {
-        $this->filterSchemes = include resource_path("views/pages/shop/mock/filterSchemes.php");
+        $this->filterSchemes = $showcasesService->filterSchemes();
 
         $this->showcases = [
             "list" => $showcasesService->get(),
@@ -22,7 +22,7 @@ new class extends Component {
     #[On("filters-updated")]
     public function loadProducts(array $filters = []): void
     {
-        // TODO: query
+        $this->showcases["list"] = app(PizzaShowcasesService::class)->get($filters);
     }
 };
 ?>
@@ -30,15 +30,18 @@ new class extends Component {
 <div>
     <livewire:layout.header />
     <livewire:layout.main>
+
         <div wire:ignore>
             <livewire:blocks.filter.filter-bar :filter-schemes="$filterSchemes" include-reset-btns />
         </div>
+
+        <x-blocks.filter.loading-overlay />
 
         <x-blocks.initialize-pizza-config />
 
         @foreach ($showcases["list"] as $showcase)
             {{-- prettier-ignore --}}
-            <livewire:blocks.showcase :data="$showcase" :productType="$showcases['productType']" :key="$showcase['id']" />
+            <livewire:blocks.showcase :data="$showcase" :product-type="$showcases['productType']" :key="$showcase['id']" />
         @endforeach
     </livewire:layout.main>
     <livewire:layout.footer />

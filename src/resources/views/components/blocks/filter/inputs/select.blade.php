@@ -1,4 +1,4 @@
-@props(["name", "label", "values"])
+@props(["label", "values"])
 
 <div x-data='{
             open: false,

@@ -3,16 +3,9 @@
 use Livewire\Component;
 
 new class extends Component {
-    public readonly bool $onHomePage;
+    public bool $onHomePage = false;
     public array $data;
-    public readonly string $cardComponent;
-
-    public function mount(array $data, string $productType, bool $onHomePage = false): void
-    {
-        $this->data = $data;
-        $this->onHomePage = $onHomePage;
-        $this->cardComponent = $this->cardComponent($productType);
-    }
+    public string $productType;
 
     public function cardComponent(string $productType): string
     {
@@ -38,9 +31,9 @@ new class extends Component {
 window.addEventListener('resize', () => { checkSlider(); });" class="mb-5">
     <div class="mx-3 mb-4 sm:flex sm:justify-start">
         <h2 class="text-3xl font-bold">
-            Bestsellers and novelties
+            {{ $data["title"] }}
             @if (isset($data["description"]))
-                <span class="tooltip" data-tip="Novelties worth tasting">
+                <span class="tooltip" data-tip="{{ $data["description"] }}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         class="bg-base-300 mb-3 inline-block size-5 rounded-full">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -81,7 +74,7 @@ window.addEventListener('resize', () => { checkSlider(); });" class="mb-5">
             @foreach ($data["products"] as $product)
                 <div class="mb-3 w-full shrink-0 snap-start px-3 sm:w-1/2 md:w-1/3 lg:w-1/4">
                     {{-- prettier-ignore --}}
-                    <livewire:is :component="$cardComponent" :product="$product" :key="$product['id']" />
+                    <livewire:is :component=" $this->cardComponent($productType)" :product="$product" :key="$product['id']" />
                 </div>
             @endforeach
         </div>

@@ -2,6 +2,7 @@
 
 namespace App\Pizza\Services;
 
+use App\Pizza\Filters\PizzaFiltersAggregator;
 use App\Pizza\Models\PizzaCategory;
 use App\Pizza\Transformers\PizzaTransformer;
 
@@ -9,13 +10,22 @@ class PizzaShowcasesService
 {
     public const string PRODUCT_TYPE = 'pizza';
 
+    public function __construct(public PizzaFiltersAggregator $filters)
+    {
+    }
+
     public function get(array $filters = []): array
     {
         $catalog = $this->catalog();
 
-        // return $this->applyFilters($catalog, $filters);
+        $this->filters->applyFilters($catalog, $filters);
 
         return $catalog;
+    }
+
+    public function filterSchemes(): array
+    {
+        return $this->filters->getSchemas();
     }
 
     private function catalog(): array

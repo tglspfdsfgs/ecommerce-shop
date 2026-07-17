@@ -3,13 +3,6 @@
 use Livewire\Component;
 
 new class extends Component {
-    /**
-     * @var array<string, array{
-     *     label: string,
-     *     values: array<int|string, string>,
-     *     component: string
-     * }>
-     */
     public array $filterSchemes;
 
     public bool $includeResetBtns = false;
@@ -19,57 +12,69 @@ new class extends Component {
 <div x-data="{
     filters: {},
 
-    activeFilters() {
-        let result = [];
-
-        const schemes = this.$wire.filterSchemes;
-
-        for (const name of Object.keys(schemes)) {
-
-            const value = this.filters[name];
-
-            if (value === undefined) continue;
-
-            const schema = schemes[name];
-
-            if (Array.isArray(value)) {
-
-                for (const item of value) {
-                    result.push({
-                        name,
-                        value: item,
-                        label: schema.values[item],
-                        resetCallback: () => {
-                            const active = this.filters[name].filter(v => v !== item);
-                            active.length === 0 ?
-                                this.filters[name] = undefined :
-                                this.filters[name] = active;
-                        }
-                    });
-                }
-            } else {
-                result.push({
-                    name,
-                    value,
-                    label: schema.values[value],
-                    resetCallback: () => {
-                        this.filters[name] = undefined;
-                    }
-                });
-            }
-        }
-
-        return result;
+    init() {
+        this.$watch('filters', (value) => $dispatch('filters-updated', { filters: value }));
     }
-}" x-init="$watch('filters', (value) => $dispatch('filters-updated', { filters: value }))" class="mb-4">
+}" class="mb-4">
 
-    @foreach ($filterSchemes as $name => $schema)
-        <x-dynamic-component :component='$schema["component"]' :name='$name' :label='$schema["label"]' :values='$schema["values"]' x-model="filters['{{ $name }}']" />
+    @foreach ($filterSchemes as $schema)
+        {{-- prettier-ignore --}}
+        <x-dynamic-component x-model="filters['{{ $schema['filter'] }}']" :component='$schema["component"]' :label='$schema["label"]' :values='$schema["values"]' />
     @endforeach
 
     @if ($includeResetBtns)
-        <div class="mt-2">
-            <template x-for="filter in activeFilters()" :key="filter.name + '-' + filter.value">
+        <div x-data="{
+            filterOptions(filter) {
+                    const schemes = this.$wire.filterSchemes.filter(
+                        (schema) => schema.filter === filter
+                    );
+        
+                    return Object.assign({},
+                        ...schemes.map((schema) => schema.values)
+                    );
+                },
+        
+                activeFilters() {
+                    let result = [];
+        
+                    for (const filter in filters) {
+        
+                        const value = filters[filter];
+        
+                        if (value == null) continue;
+        
+                        if (Array.isArray(value)) {
+                            const options = this.filterOptions(filter);
+        
+                            for (const item of value) {
+                                result.push({
+                                    key: filter + item,
+                                    label: options[item],
+                                    resetCallback: () => {
+                                        const active = filters[filter].filter(v => v !== item);
+                                        active.length === 0 ?
+                                            delete filters[filter] :
+                                            filters[filter] = active;
+                                    }
+                                });
+                            }
+                        } else {
+                            const options = this.filterOptions(filter);
+        
+                            result.push({
+                                key: filter + value,
+                                label: options[value],
+                                resetCallback: () => {
+                                    delete filters[filter];
+                                }
+                            });
+                        }
+                    }
+        
+                    return result;
+                }
+        }" class="mt-2">
+            <template x-for="filter in activeFilters()" :key="filter.key">
                 <span class="badge badge-soft mr-1 select-none">
                     <span x-text="filter.label"></span>
                     <button class="cursor-pointer" @click="filter.resetCallback()" type="button">✕</button>

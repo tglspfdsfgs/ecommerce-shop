@@ -1,4 +1,4 @@
-@props(["name", "values"])
+@props(["values"])
 
 <span x-data='{ selected: undefined }' {{ $attributes->only(["x-model"]) }} x-modelable="selected">
     <input type="radio" @click="selected = undefined" :checked="selected === undefined" aria-label="All" class="checked:btn-info btn mb-1 mr-1 rounded-md" />
