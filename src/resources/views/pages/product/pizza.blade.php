@@ -59,18 +59,18 @@ new class extends Component {
                 }
             }'
             class="mx-3">
-            <div class="mb-3 w-full"><a class="link link-info no-underline" href="#">← Back to list</a></div>
+            <div class="mb-3 w-full"><a class="link link-info no-underline" href=" {{ route("pizza.list") }} " wire:navigate>← Back to list</a></div>
             <div class="flex flex-col justify-items-start md:flex-row">
                 <span class="w-1/3 shrink-0 max-md:w-full md:mr-5">
                     <div class="relative">
-                        <img class="mx-auto" src='{{ asset("storage/product/pepperony-y-tomaty.png") }}'>
+                        <img class="mx-auto" src='{{ $product["page_image_url"] }}'>
                         <div class="badge badge-sm badge-neutral bg-neutral/50 text-neutral-content absolute bottom-1 right-1 border-none">
                             <span x-text="weight + ` g*`">{{ $product["defaults"]["weight"] }} g*</span>
                         </div>
                     </div>
 
                 </span>
-                <div class="shrink" x-on:alpine:initialized.window="$el.classList.add('overflow-x-hidden')">
+                <div class="shrink overflow-hidden">
                     <h2 class="mb-2 text-xl font-bold">{{ $product["title"] }}</h2>
                     <div class="mb-4">
                         <span class="mr-2 text-lg font-bold"><span x-text="price + ` uah`">{{ $product["defaults"]["price"] }} uah</span></span>

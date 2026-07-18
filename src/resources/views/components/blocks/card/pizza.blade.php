@@ -58,7 +58,7 @@ new class extends Component {
 }'
     class="card group-[.showed-more]:max-sm:card-side bg-base-100 shrink-0.5 shadow-sm transition-shadow hover:shadow-xl">
     <figure class="card w-full overflow-hidden group-[.showed-more]:max-sm:aspect-square group-[.showed-more]:max-sm:basis-1/2">
-        <a href="#" class="relative block h-full">
+        <a href="{{ route("pizza.product", parameters: ["slug" => $product["slug"]]) }}" wire:navigate class="relative block h-full">
             @if (!empty($product["labels"]))
                 <div class="absolute left-3 top-3 max-md:hidden">
                     @foreach ($product["labels"] as $label)
@@ -66,7 +66,7 @@ new class extends Component {
                     @endforeach
                 </div>
             @endif
-            <img src='{{ $product["card_image_path"] }}' class="h-full w-full object-cover" />
+            <img src='{{ $product["card_image_url"] }}' class="h-full w-full object-cover" />
             <div class="badge badge-sm badge-neutral bg-neutral/50 text-neutral-content absolute bottom-3 right-3 border-none">
                 <span x-text="weight + ` g*`">{{ $product["defaults"]["weight"] }} g*</span>
             </div>
@@ -126,7 +126,8 @@ new class extends Component {
                     @endforeach
                 @endforeach
             </select>
-            <a href="#" class="btn btn-outline btn-error mb-3 w-full text-black group-[.showed-more]:max-sm:hidden">Replace
+            <a href="{{ route("pizza.product", parameters: ["slug" => $product["slug"]]) }}" wire:navigate
+                class="btn btn-outline btn-error mb-3 w-full text-black group-[.showed-more]:max-sm:hidden">Replace
                 ingredients</a>
             <div class="flex w-full items-center justify-between">
                 <span class="font-bold md:text-lg"><span x-text="price + ` uah`">{{ $product["defaults"]["price"] }} uah</span></span>

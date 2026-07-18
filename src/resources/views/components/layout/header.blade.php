@@ -35,10 +35,10 @@ new class extends Component {};
                         </label>
                     </div>
                     <ul class="w-50 mt-2">
-                        <li><a href="{{ route("pizzas") }}" wire:current="text-error" wire:navigate>Pizza</a></li>
-                        <li><a href="{{ route("drinks") }}" wire:current="text-error" wire:navigate>Drinks</a></li>
-                        <li><a href="{{ route("sides") }}" wire:current="text-error" wire:navigate>Sides</a></li>
-                        <li><a href="{{ route("desserts") }}" wire:current="text-error" wire:navigate>Dessert</a></li>
+                        <li><a href="{{ route("pizza.list") }}" wire:current="text-error" wire:navigate>Pizza</a></li>
+                        <li><a href="{{ route("drink.list") }}" wire:current="text-error" wire:navigate>Drinks</a></li>
+                        <li><a href="{{ route("side.list") }}" wire:current="text-error" wire:navigate>Sides</a></li>
+                        <li><a href="{{ route("dessert.list") }}" wire:current="text-error" wire:navigate>Dessert</a></li>
                     </ul>
                     <livewire:layout.footer />
                 </div>
@@ -47,10 +47,10 @@ new class extends Component {};
         </div>
         <div class="max-md:hidden">
             <ul class="menu menu-horizontal px-1">
-                <li><a href="{{ route("pizzas") }}" wire:current="text-error" wire:navigate>Pizza</a></li>
-                <li><a href="{{ route("drinks") }}" wire:current="text-error" wire:navigate>Drinks</a></li>
-                <li><a href="{{ route("sides") }}" wire:current="text-error" wire:navigate>Sides</a></li>
-                <li><a href="{{ route("desserts") }}" wire:current="text-error" wire:navigate>Dessert</a></li>
+                <li><a href="{{ route("pizza.list") }}" wire:current="text-error" wire:navigate>Pizza</a></li>
+                <li><a href="{{ route("drink.list") }}" wire:current="text-error" wire:navigate>Drinks</a></li>
+                <li><a href="{{ route("side.list") }}" wire:current="text-error" wire:navigate>Sides</a></li>
+                <li><a href="{{ route("dessert.list") }}" wire:current="text-error" wire:navigate>Dessert</a></li>
             </ul>
         </div>
         <div class="flex">

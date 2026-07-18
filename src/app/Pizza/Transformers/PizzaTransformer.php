@@ -16,9 +16,9 @@ readonly class PizzaTransformer
      *     id:int,
      *     title:string,
      *     slug:string,
-     *     card_image_path:string,
-     *     page_image_path:string,
-     *     thumbnail_image_path:string,
+     *     card_image_url:string,
+     *     page_image_url:string,
+     *     thumbnail_image_url:string,
      *     labels:list<string>,
      *     pizza_category_id:int,
      *     composition:array<string,int>,
@@ -34,6 +34,8 @@ readonly class PizzaTransformer
      */
     public function transform(array $pizza): array
     {
+        $this->transformImageURLs($pizza);
+
         $this->transformComposition($pizza);
 
         $this->transformVariants($pizza);
@@ -41,6 +43,15 @@ readonly class PizzaTransformer
         $this->appendDefaults($pizza);
 
         return $pizza;
+    }
+
+    private function transformImageURLs(array &$pizza): void
+    {
+        $pizza['page_image_url'] = asset($pizza['page_image_path']);
+        $pizza['card_image_url'] = asset($pizza['card_image_path']);
+        $pizza['thumbnail_image_url'] = asset($pizza['thumbnail_image_path']);
+
+        unset($pizza['page_image_path'], $pizza['card_image_path'], $pizza['thumbnail_image_path']);
     }
 
     private function transformComposition(array &$pizza): void
