@@ -43,4 +43,23 @@ class Pizza extends Model
     {
         return 'title';
     }
+
+    public function scopeDetailed($query)
+    {
+        return $query
+            ->select([
+                'id',
+                'title',
+                'slug',
+                'card_image_path',
+                'page_image_path',
+                'thumbnail_image_path',
+                'labels',
+                'pizza_category_id',
+            ])
+            ->with([
+                'composition:id,slug',
+                'variants:pizza_id,option_size_id,option_dough_id,option_crust_id,price,weight',
+            ]);
+    }
 }

@@ -11,6 +11,27 @@ readonly class PizzaTransformer
     ) {
     }
 
+    /**
+     * @return array{
+     *     id:int,
+     *     title:string,
+     *     slug:string,
+     *     card_image_path:string,
+     *     page_image_path:string,
+     *     thumbnail_image_path:string,
+     *     labels:list<string>,
+     *     pizza_category_id:int,
+     *     composition:array<string,int>,
+     *     variants:array<string,mixed>,
+     *     defaults:array{
+     *         size:string,
+     *         dough:string,
+     *         crust:string,
+     *         price:int,
+     *         weight:int
+     *     }
+     * }
+     */
     public function transform(array $pizza): array
     {
         $this->transformComposition($pizza);
