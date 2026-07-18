@@ -2,16 +2,27 @@
 
 namespace App\Pizza\Services;
 
-use App\Pizza\Filters\PizzaFiltersAggregator;
+use App\Pizza\Filters\IngredientsFilter;
+use App\Pizza\Filters\PickCategoryFilter;
+use App\Pizza\Filters\SortPriceFilter;
 use App\Pizza\Models\PizzaCategory;
 use App\Pizza\Transformers\PizzaTransformer;
+use App\Shared\Filters\FiltersAggregator;
 
 class PizzaShowcasesService
 {
     public const string PRODUCT_TYPE = 'pizza';
 
-    public function __construct(public PizzaFiltersAggregator $filters)
+    private FiltersAggregator $filters;
+
+    public function __construct()
     {
+        $this->filters = new FiltersAggregator(
+            [
+                SortPriceFilter::class,
+                PickCategoryFilter::class,
+                IngredientsFilter::class,
+            ]);
     }
 
     public function get(array $filters = []): array

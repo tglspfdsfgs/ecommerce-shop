@@ -3,8 +3,10 @@
 namespace App\Pizza\Filters;
 
 use App\Pizza\Registries\IngredientsRegistry;
+use App\Shared\Filters\Filter;
+use App\Shared\Filters\FilterInputType;
 
-class IngredientsFilter
+class IngredientsFilter extends Filter
 {
     public static string $key = 'ingredients';
 
@@ -15,22 +17,17 @@ class IngredientsFilter
         $schemas = [];
 
         foreach ($groupedIngredients as $category) {
-            $schemas[] = [
-                'filter' => self::$key,
-                'label' => $category['name'],
-                'values' => array_column(
-                    $category['ingredients'],
-                    'name',
-                    'slug'
-                ),
-                'component' => 'blocks.filter.inputs.multiselect',
-            ];
+            $schemas[] = static::schema(
+                label: $category['name'],
+                values: array_column($category['ingredients'], 'name', 'slug'),
+                input: FilterInputType::MultiSelect,
+            );
         }
 
         return $schemas;
     }
 
-    public static function handle(array &$catalog, array $selectedIngredients): void
+    public static function handle(array &$catalog, mixed $selectedIngredients): void
     {
         if (empty($selectedIngredients)) {
             return;

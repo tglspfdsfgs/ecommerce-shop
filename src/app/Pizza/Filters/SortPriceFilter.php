@@ -2,21 +2,25 @@
 
 namespace App\Pizza\Filters;
 
-class SortPriceFilter
+use App\Shared\Filters\Filter;
+use App\Shared\Filters\FilterInputType;
+
+class SortPriceFilter extends Filter
 {
     public static string $key = 'price-sort';
 
     public static function getSchemas(): array
     {
-        return [[
-            'label' => 'Sort',
-            'filter' => self::$key,
-            'values' => ['DESC' => 'Price high-low', 'ASC' => 'Price low-high'],
-            'component' => 'blocks.filter.inputs.select',
-        ]];
+        return [
+            static::schema(
+                label: 'Sort',
+                values: ['DESC' => 'Price high-low', 'ASC' => 'Price low-high'],
+                input: FilterInputType::Select,
+            ),
+        ];
     }
 
-    public static function handle(array &$catalog, string $order): void
+    public static function handle(array &$catalog, mixed $order): void
     {
         $direction = 'ASC' === $order ? 1 : -1;
 

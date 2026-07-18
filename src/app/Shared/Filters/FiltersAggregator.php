@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Pizza\Filters;
+namespace App\Shared\Filters;
 
-class PizzaFiltersAggregator
+class FiltersAggregator
 {
     private array $filters;
 
-    public function __construct()
-    {
-        $this->addFilters([
-            SortPriceFilter::class,
-            PickCategoryFilter::class,
-            IngredientsFilter::class,
-        ]);
-    }
-
-    private function addFilters(array $filterClasses): void
+    /**
+     * @param array<class-string<Filter>> $filterClasses
+     */
+    public function __construct(array $filterClasses)
     {
         foreach ($filterClasses as $filterClass) {
+            if (! is_subclass_of($filterClass, Filter::class)) {
+                throw new \TypeError("Filter class $filterClass must implement ".Filter::class);
+            }
             $this->filters[$filterClass::$key] = $filterClass;
         }
     }
@@ -36,6 +33,9 @@ class PizzaFiltersAggregator
     public function applyFilters(array &$catalog, array $filters): void
     {
         foreach ($filters as $filterKey => $filterValue) {
+            if (! isset($this->filters[$filterKey])) {
+                continue;
+            }
             $this->filters[$filterKey]::handle($catalog, $filterValue);
         }
     }

@@ -1,11 +1,21 @@
 <?php
 
+use App\Shared\Filters\FilterInputType;
 use Livewire\Component;
 
 new class extends Component {
     public array $filterSchemes;
 
     public bool $includeResetBtns = false;
+
+    public function filterComponent(FilterInputType $input): string
+    {
+        return match ($input) {
+            FilterInputType::Select => "blocks.filter.inputs.select",
+            FilterInputType::MultiSelect => "blocks.filter.inputs.multiselect",
+            FilterInputType::Radio => "blocks.filter.inputs.radio",
+        };
+    }
 };
 ?>
 
@@ -19,7 +29,7 @@ new class extends Component {
 
     @foreach ($filterSchemes as $schema)
         {{-- prettier-ignore --}}
-        <x-dynamic-component x-model="filters['{{ $schema['filter'] }}']" :component='$schema["component"]' :label='$schema["label"]' :values='$schema["values"]' />
+        <x-dynamic-component x-model="filters['{{ $schema['filter'] }}']" :component="$this->filterComponent($schema['input'])" :label='$schema["label"]' :values='$schema["values"]' />
     @endforeach
 
     @if ($includeResetBtns)
