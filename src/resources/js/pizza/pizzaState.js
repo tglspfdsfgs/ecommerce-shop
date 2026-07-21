@@ -1,6 +1,46 @@
 import CompositionPriceCalculator from "./compositionPriceCalculator.js";
 
-export default class PizzaStateController {
+export default function createPizzaState(defaults, variants, composition, pizzaConfig) {
+    return {
+        size: defaults.size,
+        dough: defaults.dough,
+        crust: defaults.crust,
+        price: defaults.price,
+        weight: defaults.weight,
+        composition,
+
+        get selectDoughAndCrust() {
+            return `${this.dough}|${this.crust}`;
+        },
+        set selectDoughAndCrust(val) {
+            const [dough, crust] = val.split(`|`);
+            this.dough = dough;
+            this.crust = crust;
+        },
+
+        init() {
+            const controller = new StateController(pizzaConfig, variants, composition);
+
+            this.$watch("size", (newSize) => {
+                Object.assign(this, controller.sizeChanged(newSize, this.composition));
+            });
+
+            this.$watch("dough", (newDough) => {
+                Object.assign(this, controller.doughChanged(this.size, newDough, this.composition));
+            });
+
+            this.$watch("crust", (newCrust) => {
+                Object.assign(this, controller.crustChanged(this.size, this.dough, newCrust, this.composition));
+            });
+
+            this.$watch("composition", (newComposition) => {
+                this.price = controller.countPrice(this.size, this.dough, this.crust, newComposition);
+            });
+        },
+    };
+}
+
+class StateController {
     constructor(config, variants, defaultComposition) {
         this.optionsOrder = config.optionsOrder;
         this.variants = variants;

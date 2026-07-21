@@ -17,48 +17,12 @@ new class extends Component {
     <livewire:layout.header />
     <livewire:layout.main>
         <x-blocks.initialize-pizza-config />
-        <div x-data='{
-                size: @json($product["defaults"]["size"]),
-                dough: @json($product["defaults"]["dough"]),
-                crust: @json($product["defaults"]["crust"]),
-
-                price: @json($product["defaults"]["price"]),
-                weight: @json($product["defaults"]["weight"]),
-
-                composition: @json($product["composition"]),
-
-                stateController: null,
-
-                init() {
-                    this.stateController = new PizzaStateController(
-                        PizzaConfig,
-                        @json($product["variants"]),
-                        @json($product["composition"])
-                    );
-
-                    with (this) {
-                        price  = stateController.countPrice(size, dough, crust, composition);
-
-                        $watch(`size`, (newSize) => {
-
-                            ({ dough, crust, price, weight } = stateController.sizeChanged(newSize, composition));
-                        });
-                        $watch(`dough`, (newDough) => {
-
-                            ({ crust, price, weight } = stateController.doughChanged(size, newDough, composition));
-                        });
-                        $watch(`crust`, (newCrust) => {
-
-                            ({ price, weight } = stateController.crustChanged(size, dough, newCrust, composition));
-                        });
-                        $watch(`composition`, (newComposition) => {
-
-                            price  = stateController.countPrice(size, dough, crust, newComposition);
-                        });
-                    }
-                }
-            }'
-            class="mx-3">
+        <div x-data="createPizzaState(
+            @js($product["defaults"]),
+            @js($product["variants"]),
+            @js($product["composition"]),
+            PizzaConfig
+        )" class="mx-3">
             <div class="mb-3 w-full"><a class="link link-info no-underline" href=" {{ route("pizza.list") }} " wire:navigate>← Back to list</a></div>
             <div class="flex flex-col justify-items-start md:flex-row">
                 <span class="w-1/3 shrink-0 max-md:w-full md:mr-5">

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { Livewire } from "../../vendor/livewire/livewire/dist/livewire.esm";
-import { PizzaConfig } from "./tools/pizza/tools.js";
-import PizzaStateController from "./tools/pizza/pizzaStateController.js";
+import { PizzaConfig } from "./pizza/tools.js";
+import createPizzaState from "./pizza/pizzaState.js";
 
 window.axios = axios;
 
-window.PizzaStateController = PizzaStateController;
+window.createPizzaState = createPizzaState;
 window.PizzaConfig = PizzaConfig;
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";

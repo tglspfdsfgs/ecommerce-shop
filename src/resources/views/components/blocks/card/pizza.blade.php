@@ -7,56 +7,12 @@ new class extends Component {
 };
 ?>
 
-<div x-data='{
-    size: @json($product["defaults"]["size"]),
-    dough: @json($product["defaults"]["dough"]),
-    crust: @json($product["defaults"]["crust"]),
-
-    price: @json($product["defaults"]["price"]),
-    weight: @json($product["defaults"]["weight"]),
-
-    composition: @json($product["composition"]),
-
-    stateController: null,
-
-    get selectDoughAndCrust() {
-        return `${this.dough}|${this.crust}`;
-    },
-    set selectDoughAndCrust(val) {
-        const [dough, crust] = val.split(`|`);
-        this.dough = dough;
-        this.crust = crust;
-    },
-    init() {
-        this.stateController = new PizzaStateController(
-            PizzaConfig,
-            @json($product["variants"]),
-            @json($product["composition"])
-        );
-
-        with (this) {
-            price  = stateController.countPrice(size, dough, crust, composition);
-
-            $watch(`size`, (newSize) => {
-
-                ({ dough, crust, price, weight } = stateController.sizeChanged(newSize, composition));
-            });
-            $watch(`dough`, (newDough) => {
-
-                ({ crust, price, weight } = stateController.doughChanged(size, newDough, composition));
-            });
-            $watch(`crust`, (newCrust) => {
-
-                ({ price, weight } = stateController.crustChanged(size, dough, newCrust, composition));
-            });
-            $watch(`composition`, (newComposition) => {
-
-                price  = stateController.countPrice(size, dough, crust, newComposition);
-            });
-        }
-    }
-}'
-    class="card group-[.showed-more]:max-sm:card-side bg-base-100 shrink-0.5 shadow-sm transition-shadow hover:shadow-xl">
+<div x-data="createPizzaState(
+    @js($product["defaults"]),
+    @js($product["variants"]),
+    @js($product["composition"]),
+    PizzaConfig
+)" class="card group-[.showed-more]:max-sm:card-side bg-base-100 shrink-0.5 shadow-sm transition-shadow hover:shadow-xl">
     <figure class="card w-full overflow-hidden group-[.showed-more]:max-sm:aspect-square group-[.showed-more]:max-sm:basis-1/2">
         <a href="{{ route("pizza.product", parameters: ["slug" => $product["slug"]]) }}" wire:navigate class="relative block h-full">
             @if (!empty($product["labels"]))
